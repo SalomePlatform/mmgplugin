@@ -1,9 +1,11 @@
 import subprocess
+import time
 import re
 import os
 import shutil
 from collections import defaultdict
 import numpy as np
+from scipy.fft import fft
 from plotter import *
 from my_gnuplot import * 
 from analysis import Analysis
@@ -120,7 +122,10 @@ def perform_hmin_hmax_variations():
 
 def perform_hmin_hmax_hgrad_variations():
     """observations are done by changing hmax-hmin and hgrad"""
-    h_var_values = np.linspace(0.01, 0.5, 10)
+    amplitude = 10
+    epsilon = 0.01
+    nb_measures = 20
+    h_var_values = np.linspace(epsilon, amplitude - epsilon, nb_measures)
     hgrad_values = np.linspace(0.1, 1, 10)
     X, Y = np.meshgrid(h_var_values, hgrad_values)
 
@@ -133,7 +138,7 @@ def perform_hmin_hmax_hgrad_variations():
 
         for i, _ in enumerate(h_var_values):
             for j, _ in enumerate(hgrad_values):
-                perform_remeshing(file_path, hausd=None, hgrad=hgrad_values[j], hmin=(1-h_var_values[i]), hmax=(1+h_var_values[i]))
+                perform_remeshing(file_path, hausd=None, hgrad=hgrad_values[j], hmin=(amplitude - h_var_values[i]), hmax=(amplitude + h_var_values[i]))
                 value = perform_analysis(output_file_name)
                 results_dict[file_name].append(value)
 
@@ -318,8 +323,8 @@ def perform_hgrad_hausd_gnu_plot():
 
 def perform_hsiz_hausd_gnu_plot():
     """perform a gnu plot of the quality with a variation of hsiz and hausd"""
-    hausd_values = np.linspace(0.005, 0.03, 20)
-    hsiz_values = np.linspace(0.1, 1, 10)
+    hausd_values = np.linspace(0.001, 0.1, 20)
+    hsiz_values = np.linspace(0.1, 2, 10)
     X, Y = np.meshgrid(hausd_values, hsiz_values)
 
     quality_measures = np.full_like(X, -1)
@@ -359,24 +364,79 @@ def main():
     #perform_hausd_variations()
 
     """
+    set_output_plot_path('hausd_box')
+    perform_hausd_box_variations()
     set_output_plot_path('hausd_hgrad')
     perform_hausd_hgrad_variations()
 
     set_output_plot_path('hmin_hmax')
     perform_hmin_hmax_variations()
 
-    set_output_plot_path('hmin_hmax_hgrad')
-    perform_hmin_hmax_hgrad_variations()
-
     set_output_plot_path('hmin_hmax_hausd')
     perform_hmin_hmax_hausd_variations()
 
-    set_output_plot_path('hausd_box')
-    perform_hausd_box_variations()
-    """
-
     set_output_plot_path('hausd_hsiz')
     perform_hsiz_hausd_gnu_plot()
+
+    set_output_plot_path('hmin_hmax_hgrad')
+    perform_hmin_hmax_hgrad_variations()
+
+    amplitude = 100
+    N_echantillons = 1000
+
+    fs = N_echantillons / amplitude
+
+    h_var_values = np.linspace(0, amplitude, N_echantillons, endpoint=False)
+    hgrad = 1
+    quality_measures = np.zeros(h_var_values.shape[0])
+
+
+    for file_path in perform_mesh_ls():
+        file_name = file_path.split('/')[-1]
+        output_file_name = os.path.join(OUTPUT_PATH, file_name[:-4] + "o.mesh")
+        liste = results_dict[file_name]
+
+        for i, _ in enumerate(h_var_values):
+            perform_remeshing(file_path, hausd=None, hgrad=hgrad, hmin=(amplitude - h_var_values[i]), hmax=(amplitude + h_var_values[i]))
+            value = perform_analysis(output_file_name)
+            results_dict[file_name].append(value)
+
+            quality_measures[i] = value.quality
+
+            empty_dir()
+
+        # plots
+        classic_plot(h_var_values, quality_measures, "hmax-hmin", "quality", 'fft_' + file_name)
+
+        fft_result = fft(quality_measures)
+        freqs = np.fft.fftfreq(len(fft_result), 1/fs)
+        plt.figure(figsize=(12, 6))
+        plt.subplot(2, 1, 1)
+        plt.plot(h_var_values, quality_measures)
+        plt.title('Signal dans le domaine temporel')
+        plt.xlabel('Temps (s)')
+        plt.ylabel('Amplitude')
+
+        plt.subplot(2, 1, 2)
+        plt.plot(freqs, np.abs(fft_result))
+        plt.title('Spectre de fréquence (Module)')
+        plt.xlabel('Fréquence (Hz)')
+        plt.ylabel('Amplitude')
+        plt.xlim(0, fs/2)
+        plt.tight_layout()
+        plt.savefig('../studies/freq_analysis/freq_' + file_name + '_hmin_hmax_hgrad.png')
+        plt.show()
+        print("signal:", quality_measures)
+        print("fft_result:", fft_result)
+        print("freqs:", freqs)
+
+    from mechanic import *
+    faces = mesh.GetElementsByType(SMESH.FACE)
+    aspects = [mesh.GetAspectRatio(id) for id in faces]
+    print(aspects)
+    """
+
+
 
 if __name__ == "__main__":
     main()

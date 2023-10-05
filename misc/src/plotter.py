@@ -8,8 +8,8 @@ from loggerpy.loggingMld import *
 logger = Logger()
 logger.set_level("info")
 
-should_save = False
-logger.info("Document saving : " + str(should_save))
+should_save = True
+logger.info("Classic 2D plot saving : " + str(should_save))
 
 def classic_plot(X, Y, xlabel="x", ylabel="y", title=""):
     """plot the 1 parameter study graph"""
@@ -21,7 +21,7 @@ def classic_plot(X, Y, xlabel="x", ylabel="y", title=""):
         return a*x+b
 
     # Apply the Savitzky-Golay filter for smoothing
-    window_length = 11  # Adjust the window length as needed
+    window_length = 8  # Adjust the window length as needed
     polyorder = 2       # Adjust the polynomial order as needed
     y_smooth = savgol_filter(Y, window_length, polyorder)
 

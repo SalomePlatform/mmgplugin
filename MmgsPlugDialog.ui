@@ -1,0 +1,992 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MmgsPlugDialog</class>
+ <widget class="QWidget" name="MmgsPlugDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>791</width>
+    <height>593</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MMGS : Remeshing tool</string>
+  </property>
+  <property name="sizeGripEnabled" stdset="0">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer_xx">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Minimum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>10</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_OK">
+       <property name="text">
+        <string>Compute</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_Cancel">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>30</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_SaveHyp">
+       <property name="text">
+        <string>Save</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>18</width>
+         <height>18</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_LoadHyp">
+       <property name="text">
+        <string>Load</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>18</width>
+         <height>18</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_Default">
+       <property name="text">
+        <string>Default</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>30</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_Help">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Help</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_xx">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Minimum</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>10</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QTabWidget" name="TWOptions">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="simple">
+      <attribute name="title">
+       <string>Simple Remeshing Options</string>
+      </attribute>
+      <widget class="QGroupBox" name="GBOptim">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>750</width>
+         <height>270</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Optimisation</string>
+       </property>
+       <layout class="QHBoxLayout" name="RBLayoutopt">
+        <item>
+         <spacer name="horizontalSpacer_xx">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>30</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="monRBLayout">
+          <item>
+           <widget class="QRadioButton" name="RB_0">
+            <property name="toolTip">
+             <string>Quality improvement is done by point smoothing and edge swapping.</string>
+            </property>
+            <property name="text">
+             <string>Quality improvement Only </string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="RB_G">
+            <property name="toolTip">
+             <string>The given surface triangulation is enriched (no coarsening at all) in such away that the distance 
+between the elements in the final mesh and those of the initial one is bounded by auser specified tolerance value. 
+One should use this option, to enrich the mesh where purely
+geometrical features may be insuficiently fine, i.e. the resulting mesh will be least as fine as the input.
+Mesh and the geometric features will be refined if needed as specified by the other program parameters.
+The meshes obtained with those settings may not be suitable for computation.</string>
+            </property>
+            <property name="text">
+             <string>Pure Geometry Enrichment </string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="RB_U">
+            <property name="toolTip">
+             <string>An uniform subdivision of the given surface triangulation is performed : 
+each triangle of the given surface triangulation is considered at and
+is divided into identical triangles.</string>
+            </property>
+            <property name="text">
+             <string>Uniform Subdivision </string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="RB_S">
+            <property name="toolTip">
+             <string>A surface sandpapering without shrinkage of the given surface
+triangulation is performed, i.e., the high curvature variations of the
+given surface will be smoothed out without shrinking the volume in
+doing so. If ridges are defined, they will be kept as they are in the
+resulting mesh.
+This option modifies the geometry.</string>
+            </property>
+            <property name="text">
+             <string>Sandpapering</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="RB__2">
+            <property name="toolTip">
+             <string>The given surface triangulation is modified in such a way that the distance between 
+the elements in the final mesh and those of the initial one is bounded by a user specified tolerance value.
+One should use this option, to coarsen when a purely geometrical mesh is needed. (a mesh that keeps
+and obeys its geometric features only.) The meshes obtained with this option are usually not suitable
+for computation because anisotropic elements may be generated</string>
+            </property>
+            <property name="text">
+             <string>Geometrical Mesh : Coarsening</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="RB_2">
+            <property name="toolTip">
+             <string>The given surface triangulation is modified in such a way that the distance between 
+the elements in the final mesh and those of the initial one is bounded by a user specified tolerance value.
+One should use this option, to coarsen and enrich when a purely geometrical mesh is needed. (a mesh that keeps
+and obeys its geometric features only.) The meshes obtained with this setting are usually not suitable
+for computation because anisotropic elements may be generated</string>
+            </property>
+            <property name="text">
+             <string>Geometrical Mesh : Coarsening and Enrichment</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="RB__1">
+            <property name="toolTip">
+             <string>The given surface triangulation is modified in accordance to a size map. 
+The latter can be either the intrinsic size map (computed automatically
+and based on the surface properties, i.e. the local curvatures),
+or on a given size map (which is then combined to the intrinsic size map). 
+One should use this option to coarsen  the mesh, when a regular mesh 
+for computation purposes is desired, i.e. a mesh with good aspect ratios or 
+good quality elements.</string>
+            </property>
+            <property name="text">
+             <string>Mesh for finite element computation : Coarsening</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="RB_1">
+            <property name="toolTip">
+             <string>The given surface triangulation is modified in accordance to a size map. 
+The latter can be either the intrinsic size map (computed automatically
+and based on the surface properties, i.e. the local curvatures),
+or on a given size map (which is then combined to the intrinsic size map). 
+One should use this option to coarse and enrich the mesh, when a regular mesh 
+for computation purposes is desired, i.e. a mesh with good aspect ratios or 
+good quality elements</string>
+            </property>
+            <property name="text">
+             <string>Mesh for finite element computation : Coarsening and Enrichment</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="GBUnit">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>420</y>
+         <width>750</width>
+         <height>70</height>
+        </rect>
+       </property>
+       <property name="toolTip">
+        <string>This parameter enables the user to bound the maximal chordal deviation allowed,
+that is the maximal distance allowed between the detected curve and the plane P
+of the corresponding mesh face.
+In other words, it avoids having faces too far away from the curve they should represent.</string>
+       </property>
+       <property name="title">
+        <string>Chordal deviation Tolerance</string>
+       </property>
+       <widget class="QLineEdit" name="SP_Tolerance">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>30</y>
+          <width>110</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>If the Units parameter is relative, epsilon max correspond to s*Tolerance, where s is the size of the bounding box of the domain.
+If the Units parameter is absolute, the tolerance parameter is expressed in model units:
+  if P=2 and point coordinates are given in millimeters, the maximal chordal deviation is 2 mm.</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="RB_Absolute">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>30</y>
+          <width>120</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Values are expressed in the model units.</string>
+        </property>
+        <property name="text">
+         <string>Absolute units</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="RB_Relative">
+        <property name="geometry">
+         <rect>
+          <x>350</x>
+          <y>30</y>
+          <width>120</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>Values are relative (per thousand) to the bounding box size.</string>
+        </property>
+        <property name="text">
+         <string>Relative units</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>750</width>
+         <height>120</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="title">
+        <string>Original Mesh</string>
+       </property>
+       <widget class="QPushButton" name="PB_MeshFile">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>70</y>
+          <width>190</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Mesh File GMF format</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="LE_MeshFile">
+        <property name="geometry">
+         <rect>
+          <x>240</x>
+          <y>70</y>
+          <width>481</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="PB_MeshSmesh">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>30</y>
+          <width>190</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Mesh Object Browser</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="LE_MeshSmesh">
+        <property name="geometry">
+         <rect>
+          <x>240</x>
+          <y>30</y>
+          <width>481</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>31</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>or</string>
+        </property>
+       </widget>
+      </widget>
+      <zorder>GBUnit</zorder>
+      <zorder>groupBox</zorder>
+      <zorder>GBOptim</zorder>
+     </widget>
+     <widget class="QWidget" name="advanced">
+      <attribute name="title">
+       <string>Advanced Remeshing Options</string>
+      </attribute>
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>750</width>
+         <height>120</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>You can set/unset</string>
+       </property>
+       <widget class="QCheckBox" name="CB_Ridge">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>20</y>
+          <width>271</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>If not set (ridge detection disabled), Yams will not try to detect any new ridge edge by its own mechanism : 
+it will consider as ridge only the ridges given in the mesh. 
+All non-ridge edges that would have been detected as ridge by the ridge angle parameter 
+(see below)  will be considered as part of the same continuous patch.
+This option should not be checked when all the known ridges of the mesh are given and
+when all other possible ridges are not geometric ridges to take into account.</string>
+        </property>
+        <property name="text">
+         <string>ridge detection</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="CB_Point">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>50</y>
+          <width>271</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>When not set (point smoothing is disabled), Yams will not try to move the initial given vertices 
+(along an edge, a ridge or onto the surface), hence Yams will only swap edges, remove vertices
+or add vertices (refines) to change the mesh.</string>
+        </property>
+        <property name="text">
+         <string>point smoothing</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="CB_SplitEdge">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>80</y>
+          <width>271</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>If set, Yams creates new vertices placed on the curved surface and adds them to elements. 
+It means one extra vertex on edge (P2 or quadratic triangles).
+New created vertices are saved in the .mesh file under keyword section 'Vertices'</string>
+        </property>
+        <property name="text">
+         <string>split edge</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>750</width>
+         <height>270</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>You can control</string>
+       </property>
+       <widget class="QDoubleSpinBox" name="SP_Geomapp">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>30</y>
+          <width>100</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <double>90.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>15.000000000000000</double>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_2">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>30</y>
+          <width>630</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>This field (as well as tolerance) enables the user to control the accuracy of the
+piecewise linear approximation of the surface. This parameter enables the user to
+control the maximal angle allowed between two adjacent faces. It can be used to
+bound the maximal deviation of the mesh faces from the tangent planes at mesh vertices. 
+In other words, it avoids having sharp angles between faces representing a smooth curve.
+This parameter enables the user to specify the maximal chordal deviation &quot;max relatively to the curvature.
+Following that criterion:
+- if the chordal deviation epsilon is smaller than epsilon max*r, it is acceptable to remove the considered point;
+- if the chordal deviation epsilon is greater than epsiolon max*r, the considered mesh face should be redefined 
+     by adding a point on the curve.
+One can see that the smaller the radius r, the harder it is to satisfy this criterion:  
+epsilon max is a real value corresponding to a percentage, the ratio between the chordal deviation to 
+the local curvature. This field is used only for optimisation style -O values of  -1, 0 and 1.
+The default value for &quot;max is set to 0:04 which leads to angles of less than 33 degrees between two adjacent
+faces.</string>
+        </property>
+        <property name="text">
+         <string>Geometrical approximation:
+Maximum angle allowed between a face and a curve (not separated by a ridge).</string>
+        </property>
+       </widget>
+       <widget class="QDoubleSpinBox" name="SP_Ridge">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>70</y>
+          <width>100</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <double>90.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>45.000000000000000</double>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>70</y>
+          <width>630</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>If the angle between the normal vectors of two adjacent faces exceeds this value,
+the edge common to the faces is a ridge.</string>
+        </property>
+       </widget>
+       <widget class="QDoubleSpinBox" name="SP_MaxSize">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>110</y>
+          <width>100</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>100.000000000000000</double>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>110</y>
+          <width>630</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>This parameter allows the user to prescribe a maximal size hmax
+for the mesh elements i.e., the lengths of the edges with respect to the specified
+ size map. The corresponding values are either relative or absolute depending on the chosen parameter.
+The default values are automatically set based on the surface geometry (curvature dependent) and its
+bounding box size.
+Please note that, as it is not strictly possible to obey the given or computed size map, the actual maximal
+size  may be slightly bigger than the prescribed ones.</string>
+        </property>
+        <property name="text">
+         <string>Maximal size allowed around vertices,
+the lengths of the edges with respect to the specified size map.</string>
+        </property>
+       </widget>
+       <widget class="QDoubleSpinBox" name="SP_MinSize">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>150</y>
+          <width>100</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <double>0.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>100.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>5.000000000000000</double>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>150</y>
+          <width>630</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>This parameter allows the user to prescribe a maximal size hmax
+for the mesh elements i.e., the lengths of the edges with respect to the specified
+ size map. The corresponding values are either relative or absolute depending on the chosen parameter.
+The default values are automatically set based on the surface geometry (curvature dependent) and its
+bounding box size.
+Please note that, as it is not strictly possible to obey the given or computed size map, the actual maximal
+size  may be slightly bigger than the prescribed ones.</string>
+        </property>
+        <property name="text">
+         <string>Minimal size allowed around vertices,
+the lengths of the edges with respect to the specified size map.</string>
+        </property>
+       </widget>
+       <widget class="QDoubleSpinBox" name="SP_Gradation">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>190</y>
+          <width>100</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="singleStep">
+         <double>0.010000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.300000000000000</double>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>190</y>
+          <width>630</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>This parameter enables the user to control the element size variation in the triangulation.
+Yams will avoid getting two adjacent edges which sizes differ by a factor bigger than this parameter. 
+To avoid rapid size variations, a size correction procedure is applied to the size map. 
+In other words: if two adjacent edges are respectively e1 and e2 long 
+if  e2 &gt; parameter * e1 then e02 the new size for the second edge will be set to  parameter* e1.
+This procedure is de-activated if yams computes a mesh for finite element with only coarsening.
+The default value is 1.3, which is the usual value set for computational meshes.</string>
+        </property>
+        <property name="text">
+         <string>Mesh Gradation: the element size variation in the triangulation.
+Yams will avoid having two adjacent edges which sizes vary more than the given gradation.</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="generic">
+      <attribute name="title">
+       <string>Generic Options</string>
+      </attribute>
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>750</width>
+         <height>130</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Yams Generic Options</string>
+       </property>
+       <widget class="QSpinBox" name="SP_Verbosity">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>30</y>
+          <width>100</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>3</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>30</y>
+          <width>600</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>sets the verbosity level.
+From 0 (no detail) to 10 (very detailed).
+Default is 3.</string>
+        </property>
+        <property name="text">
+         <string>Verbosity level</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="SP_Memory">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>70</y>
+          <width>100</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>100000</number>
+        </property>
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>70</y>
+          <width>600</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>The program requires roughly about 370 bytes per point. It is thus possible to estimate a priori 
+the required memory size to complete a job. As an example of memory space needed, a mesh 
+of 543,652 points (1,087,716 triangles) requires 182 Mbytes (about 351 bytes per point). Conversely, 
+a workstation having 512 Mbytes of memory can handle a mesh of about 2,750,000 points.
+The memory needed for mesh modification is allocated dynamically at the beginning of the procedure 
+(data reading), based on the initial triangulation size. When the program reaches the amount of maximal 
+memory allowed, it will stop inserting points and, if possible, the current mesh will be saved as it is, 
+valid and conformal, provided the input mesh was valid and conformal.
+Specify the memory if:
+- the automatically allocated memory reveals insufficient when the user asked to enrich the given mesh.
+- you want to limit the amount of memory used by the program.
+If the input mesh size requires more memory than requested or if the allocated memory (user defined or not)
+exceeds the machine capabilities, the tool will stop because of insufficient memory.</string>
+        </property>
+        <property name="text">
+         <string>Memory size (in Mbytes)</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>150</y>
+         <width>750</width>
+         <height>170</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Plug-in Generic Options</string>
+       </property>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>40</y>
+          <width>391</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>File used to save Yams hypothesis parameters :</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="PB_ParamsFileExplorer">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>70</y>
+          <width>30</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="LE_ParamsFile">
+        <property name="geometry">
+         <rect>
+          <x>60</x>
+          <y>70</y>
+          <width>661</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="PB_Save">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>110</y>
+          <width>70</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Save</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="PB_Load">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>110</y>
+          <width>70</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Load</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>18</width>
+          <height>18</height>
+         </size>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -39,6 +39,8 @@ class MyViewText(Ui_ViewExe, QDialog):
     Classe permettant la visualisation de texte
     """
     def __init__(self, parent, txt):
+        with open(os.path.join(os.path.expanduser("~"),"mylogs.txt"), "w") as file:
+            file.write(txt)
         QDialog.__init__(self,parent)
         self.setupUi(self)
         self.resize( QSize(1000,600).expandedTo(self.minimumSizeHint()) )

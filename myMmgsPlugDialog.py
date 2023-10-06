@@ -285,10 +285,6 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
 
   def getResumeData(self, separator="\n"):
     text=""
-    for RB in self.GBOptim.findChildren(QRadioButton,):
-      if RB.isChecked()==True:
-        text+="Optimisation="+RB.text()+separator
-        break
     text+="SwapEdge="+str(self.CB_SwapEdge.isChecked())+separator
     text+="MoveEdge="+str(self.CB_MoveEdge.isChecked())+separator
     text+="InsertEdge="+str(self.CB_InsertEdge.isChecked())+separator
@@ -349,10 +345,6 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
     
     text=mySObject.GetComment()
     
-    #a verification
-    if "Optimisation=" not in text:
-      QMessageBox.critical(self, "Load Hypothese", "Object Browser selection not a MGSurfOptHypothesis")
-      return
     self.loadResumeData(text, separator=" ; ")
     return
     
@@ -445,52 +437,21 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
       QMessageBox.critical(self, "File", "unable to read GMF Mesh in "+str(self.fichierIn))
       return False
     
-    self.commande="mg-surfopt.exe"
-    
-    for obj in self.GBOptim.findChildren(QRadioButton,):
-      try:
-        if obj.isChecked():
-          self.style=obj.objectName().remove(0,3)
-          self.style.replace("_","-")
-          break
-      except:
-        pass
-      
-    style = str(self.style)
-    # Translation of old Yams options to new MG-SurfOpt options
-    if   style == "0" :
-      self.commande+= " --optimisation only"
-    elif style == "2" :
-      self.commande+= " --Hausdorff_like yes"
-    elif style == "-1":
-      self.commande+= " --enrich no"
-    elif style == "-2":
-      self.commande+= " --Hausdorff_like yes --enrich no"
-    elif style == "U" :
-      self.commande+= " --uniform_flat_subdivision yes"
-    elif style == "S" :
-      self.commande+= " --sand_paper yes"
-    elif style == "G" :
-      self.commande+= " -O G"  # This option has not been updated to the new option style yet
+    self.commande="mmgs_O3"
 
     deb=os.path.splitext(self.fichierIn)
     self.fichierOut=deb[0] + "_output.mesh"
     
-    if self.CB_InsertEdge.isChecked()== True  : self.commande+=" --element_order quadratic" #FIXME
-    if self.CB_SwapEdge.isChecked()== True  : self.commande+=" --element_order quadratic" #FIXME
-    if self.CB_MoveEdge.isChecked()== True  : self.commande+=" --element_order quadratic" #FIXME
-    if self.SP_Geomapp.value()      != 15.0  : self.commande+=" --geometric_approximation_angle %f"%self.SP_Geomapp.value()
-    if self.SP_Ridge.value()        != 45.0  : self.commande+=" --ridge_angle %f"%self.SP_Ridge.value()
-    if self.SP_HSize.value()      != 5     : self.commande+=" --min_size %f"   %self.SP_HSize.value() #FIXME
-    if self.SP_Gradation.value()    != 1.3   : self.commande+=" --gradation %f"  %self.SP_Gradation.value()
+    if self.CB_InsertEdge.isChecked()== False  : self.commande+=" -noinsert"
+    if self.CB_SwapEdge.isChecked()== False  : self.commande+=" -noswap"
+    if self.CB_MoveEdge.isChecked()== False  : self.commande+=" -nomove"
+    if self.SP_Geomapp.value() != 0.01 : self.commande+=" -hausd %f"%self.SP_Geomapp.value()
+    if self.SP_Ridge.value() != 45.0  : self.commande+=" -ar %f"%self.SP_Ridge.value()
+    self.commande+=" -hsiz %f"   %self.SP_HSize.value()
+    if self.SP_Gradation.value() != 1.3   : self.commande+=" -hgrad %f"  %self.SP_Gradation.value()
 
-    self.commande+=' --in "'  + self.fichierIn +'"'
-    self.commande+=' --out "' + self.fichierOut +'"'
-
-    import SMeshHelper
-    key = SMeshHelper.GetMGLicenseKey( self.fichierIn )
-    if key != "0":
-      self.commande+=' --key ' + key
+    self.commande+=' -in "'  + self.fichierIn +'"'
+    self.commande+=' -out "' + self.fichierOut +'"'
 
     if verbose: print("INFO: MG-SurfOpt command:\n  %s" % self.commande)
     return True

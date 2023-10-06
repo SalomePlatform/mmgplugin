@@ -23,13 +23,13 @@
 
 import os, subprocess
 import tempfile
-from mmgplugin.MyPlugDialog_ui import Ui_MmgsPlugDialog
+from mmgplugin.MyPlugDialog_ui import Ui_MmgPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
 
 verbose = True
 
-class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
+class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
   """
   """
   def __init__(self):
@@ -127,7 +127,7 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
     else:
       initialMeshObject=maStudy.FindObjectByName(name ,"SMESH")[0]
 
-    meshname = name+"_MGSO_"+str(self.num)
+    meshname = name+"_MMG_"+str(self.num)
     smesh.SetName(outputMesh.GetMesh(), meshname)
     outputMesh.Compute() #no algorithms message for "Mesh_x" has been computed with warnings: -  global 1D algorithm is missing
 
@@ -483,7 +483,7 @@ def getDialog():
   """
   global __dialog
   if __dialog is None:
-    __dialog = MyMmgsPlugDialog()
+    __dialog = MyMmgPlugDialog()
   #else :
   #  __dialog.clean()
   return __dialog

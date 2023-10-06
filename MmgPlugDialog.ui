@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MmgsPlugDialog</class>
- <widget class="QWidget" name="MmgsPlugDialog">
+ <class>MmgPlugDialog</class>
+ <widget class="QWidget" name="MmgPlugDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MMGS : Remeshing tool</string>
+   <string>MMG : Remeshing tool</string>
   </property>
   <property name="sizeGripEnabled" stdset="0">
    <bool>false</bool>
@@ -281,7 +281,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>If set, Mmgs will not prevent point insertion/deletion</string>
+         <string>If set, Mmg will not prevent point insertion/deletion</string>
         </property>
         <property name="text">
          <string>insert edge</string>
@@ -300,7 +300,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>If set, Mmgs will not prevent point relocation</string>
+         <string>If set, Mmg will not prevent point relocation</string>
         </property>
         <property name="text">
          <string>move edge</string>
@@ -319,7 +319,7 @@
          </rect>
         </property>
         <property name="toolTip">
-         <string>If set, Mmgs will not prevent edge flipping</string>
+         <string>If set, Mmg will not prevent edge flipping</string>
         </property>
         <property name="text">
          <string>swap edge</string>
@@ -411,7 +411,7 @@ representation of the boundary and the reconstructed ideal boundary.</string>
         </property>
         <property name="toolTip">
          <string>By default it is set to 45°.
-This means that Mmgs dectects a sharp angle at the
+This means that Mmg dectects a sharp angle at the
 interface of 2 boundary elements if the angle between their outward
 normals is greater than 45°.</string>
         </property>

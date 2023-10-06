@@ -1,4 +1,4 @@
-UI_FILE=MmgsPlugDialog.ui
+UI_FILE=MmgPlugDialog.ui
 PY_FILE=MyPlugDialog_ui.py
 
 all: $(PY_FILE)

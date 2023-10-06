@@ -31,6 +31,6 @@ def Mmgs(context):
   import tempfile
   from qtsalome import QFileDialog, QMessageBox
   
-  import myMmgsPlugDialog
+  import mmgplugin.myMmgsPlugDialog as myMmgsPlugDialog
   window = myMmgsPlugDialog.getDialog()
   window.show()

@@ -23,13 +23,13 @@
 
 import os, subprocess
 import tempfile
-from MyPlugDialog_ui import Ui_MmgsPlugDialog
-from myViewText import MyViewText
+from mmgplugin.MyPlugDialog_ui import Ui_MmgsPlugDialog
+from mmgplugin.myViewText import MyViewText
 from qtsalome import *
 
 verbose = True
 
-class myMmgsDialog(Ui_MmgsPlugDialog,QWidget):
+class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
   """
   """
   def __init__(self):
@@ -60,28 +60,11 @@ class myMmgsDialog(Ui_MmgsPlugDialog,QWidget):
     self.PB_MeshSmesh.setToolTip("source mesh from Salome Object Browser")
     icon = QIcon()
     icon.addFile(os.path.join(self.iconfolder,"open.png"))
-    self.PB_ParamsFileExplorer.setIcon(icon)
-    self.PB_Load.setIcon(icon)
-    self.PB_Load.setToolTip("hypothesis from file")
-    self.PB_Save.setIcon(icon)
-    self.PB_Save.setToolTip("hypothesis to file")
     self.PB_MeshFile.setIcon(icon)
     self.PB_MeshFile.setToolTip("source mesh from a file in disk")
 
-    #Ces parametres ne sont pas remis a rien par le clean
-    self.paramsFile= os.path.abspath(os.path.join(os.path.expanduser("~"),".MGSurfOpt.dat"))
-    self.LE_ParamsFile.setText(self.paramsFile)
     self.LE_MeshFile.setText("")
     self.LE_MeshSmesh.setText("")
-
-    v1=QDoubleValidator(self)
-    v1.setBottom(0.)
-    #v1.setTop(1000.) #per thousand... only if relative
-    v1.setDecimals(3)
-    self.SP_Tolerance.setValidator(v1)
-    self.SP_Tolerance.titleForWarning="Chordal Tolerance"
-
-    self.SP_MinSize.setDecimals(5)
 
     self.resize(800, 600)
     self.clean()
@@ -92,17 +75,11 @@ class myMmgsDialog(Ui_MmgsPlugDialog,QWidget):
     self.PB_Help.clicked.connect(self.PBHelpPressed)
     self.PB_OK.clicked.connect(self.PBOKPressed)
     
-    self.PB_Load.clicked.connect(self.PBLoadPressed)
-    self.PB_Save.clicked.connect(self.PBSavePressed)
     self.PB_LoadHyp.clicked.connect(self.PBLoadHypPressed)
     self.PB_SaveHyp.clicked.connect(self.PBSaveHypPressed)
     
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
-    self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
-    self.PB_ParamsFileExplorer.clicked.connect(self.setParamsFileName)
-    self.LE_MeshFile.returnPressed.connect(self.meshFileNameChanged)
-    self.LE_ParamsFile.returnPressed.connect(self.paramsFileNameChanged)
 
   def PBHelpPressed(self):
     import SalomePyQt
@@ -312,22 +289,12 @@ class myMmgsDialog(Ui_MmgsPlugDialog,QWidget):
       if RB.isChecked()==True:
         text+="Optimisation="+RB.text()+separator
         break
-    if self.RB_Absolute.isChecked():
-      text+="Units=absolute"+separator
-    else:
-      text+="Units=relative"+separator
-    v=self.SP_toStr(self.SP_Tolerance)
-    text+="ChordalToleranceDeviation="+v+separator
     text+="RidgeDetection="+str(self.CB_Ridge.isChecked())+separator
     text+="SplitEdge="+str(self.CB_SplitEdge.isChecked())+separator
-    text+="PointSmoothing="+str(self.CB_Point.isChecked())+separator
     text+="GeometricalApproximation="+str(self.SP_Geomapp.value())+separator
     text+="RidgeAngle="+str(self.SP_Ridge.value())+separator
-    text+="MaximumSize="+str(self.SP_MaxSize.value())+separator
-    text+="MinimumSize="+str(self.SP_MinSize.value())+separator
+    text+="HSize="+str(self.SP_HSize.value())+separator
     text+="MeshGradation="+str(self.SP_Gradation.value())+separator
-    text+="Verbosity="+str(self.SP_Verbosity.value())+separator
-    text+="Memory="+str(self.SP_Memory.value())+separator
     return str(text)
 
   def loadResumeData(self, hypothesis, separator="\n"):
@@ -355,17 +322,12 @@ class myMmgsDialog(Ui_MmgsPlugDialog,QWidget):
           else:
             self.RB_Absolute.setChecked(False)
             self.RB_Relative.setChecked(True)
-        if tit=="ChordalToleranceDeviation": self.SP_Tolerance.setProperty("text", float(value))
         if tit=="RidgeDetection": self.CB_Ridge.setChecked(value=="True")
         if tit=="SplitEdge": self.CB_SplitEdge.setChecked(value=="True")
-        if tit=="PointSmoothing": self.CB_Point.setChecked(value=="True")
         if tit=="GeometricalApproximation": self.SP_Geomapp.setProperty("value", float(value))
         if tit=="RidgeAngle": self.SP_Ridge.setProperty("value", float(value))
-        if tit=="MaximumSize": self.SP_MaxSize.setProperty("value", float(value))
-        if tit=="MinimumSize": self.SP_MinSize.setProperty("value", float(value))
+        if tit=="HSize": self.SP_HSize.setProperty("value", float(value))
         if tit=="MeshGradation": self.SP_Gradation.setProperty("value", float(value))
-        if tit=="Verbosity": self.SP_Verbosity.setProperty("value", int(float(value)))
-        if tit=="Memory": self.SP_Memory.setProperty("value", float(value))
       except:
         QMessageBox.warning(self, "load MGSurfOpt Hypothesis", "Problem on '"+lig+"'")
 
@@ -527,21 +489,12 @@ class myMmgsDialog(Ui_MmgsPlugDialog,QWidget):
     deb=os.path.splitext(self.fichierIn)
     self.fichierOut=deb[0] + "_output.mesh"
     
-    tolerance=self.SP_toStr(self.SP_Tolerance)
-    if not self.RB_Absolute.isChecked():
-      tolerance+="r"  
-    self.commande+=" --chordal_error %s"%tolerance
-    
     if self.CB_Ridge.isChecked()    == False : self.commande+=" --compute_ridges no"
-    if self.CB_Point.isChecked()    == False : self.commande+=" --optimisation no"
     if self.CB_SplitEdge.isChecked()== True  : self.commande+=" --element_order quadratic"
     if self.SP_Geomapp.value()      != 15.0  : self.commande+=" --geometric_approximation_angle %f"%self.SP_Geomapp.value()
     if self.SP_Ridge.value()        != 45.0  : self.commande+=" --ridge_angle %f"%self.SP_Ridge.value()
-    if self.SP_MaxSize.value()      != 100   : self.commande+=" --max_size %f"   %self.SP_MaxSize.value()
-    if self.SP_MinSize.value()      != 5     : self.commande+=" --min_size %f"   %self.SP_MinSize.value()
+    if self.SP_HSize.value()      != 5     : self.commande+=" --min_size %f"   %self.SP_HSize.value() #FIXME
     if self.SP_Gradation.value()    != 1.3   : self.commande+=" --gradation %f"  %self.SP_Gradation.value()
-    if self.SP_Memory.value()       != 0     : self.commande+=" --max_memory %d" %self.SP_Memory.value()
-    if self.SP_Verbosity.value()    != 3     : self.commande+=" --verbose %d" %self.SP_Verbosity.value()
 
     self.commande+=' --in "'  + self.fichierIn +'"'
     self.commande+=' --out "' + self.fichierOut +'"'
@@ -555,27 +508,20 @@ class myMmgsDialog(Ui_MmgsPlugDialog,QWidget):
     return True
 
   def clean(self):
-    self.RB_0.setChecked(True)
     #no need: exlusives QRadioButton
     #self.RB_G.setChecked(False)
     #self.RB_U.setChecked(False)
     #self.RB_S.setChecked(False)
     #self.RB_2.setChecked(False)
     #self.RB_1.setChecked(False)
-    self.RB_Relative.setChecked(True)
     #no need: exlusives QRadioButton
     #self.RB_Absolute.setChecked(False)
-    self.SP_Tolerance.setProperty("text", "0.001")
-    self.SP_Geomapp.setProperty("value", 15.0)
+    self.SP_Geomapp.setProperty("value", 0.01)
     self.SP_Ridge.setProperty("value", 45.0)
     self.SP_Gradation.setProperty("value", 1.3)
     self.CB_Ridge.setChecked(True)
-    self.CB_Point.setChecked(True)
     self.CB_SplitEdge.setChecked(False)
-    self.SP_MaxSize.setProperty("value", 100)
-    self.SP_MinSize.setProperty("value", 5)
-    self.SP_Verbosity.setProperty("value", 3)
-    self.SP_Memory.setProperty("value", 0)
+    self.SP_HSize.setProperty("value", 0.1)
     #self.PBMeshSmeshPressed() #do not that! problem if done in load surfopt hypo from object browser 
     self.TWOptions.setCurrentIndex(0) # Reset current active tab to the first tab
 

@@ -289,8 +289,9 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
       if RB.isChecked()==True:
         text+="Optimisation="+RB.text()+separator
         break
-    text+="RidgeDetection="+str(self.CB_Ridge.isChecked())+separator
-    text+="SplitEdge="+str(self.CB_SplitEdge.isChecked())+separator
+    text+="SwapEdge="+str(self.CB_SwapEdge.isChecked())+separator
+    text+="MoveEdge="+str(self.CB_MoveEdge.isChecked())+separator
+    text+="InsertEdge="+str(self.CB_InsertEdge.isChecked())+separator
     text+="GeometricalApproximation="+str(self.SP_Geomapp.value())+separator
     text+="RidgeAngle="+str(self.SP_Ridge.value())+separator
     text+="HSize="+str(self.SP_HSize.value())+separator
@@ -307,23 +308,9 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
       if lig[0]=="#": break
       try:
         tit,value=lig.split("=")
-        if tit=="Optimisation":
-          #no need: exlusives QRadioButton
-          #for RB in self.GBOptim.findChildren(QRadioButton,):
-          #  RB.setChecked(False)
-          for RB in self.GBOptim.findChildren(QRadioButton,):
-            if RB.text()==value :
-              RB.setChecked(True)
-              break
-        if tit=="Units":
-          if value=="absolute":
-            self.RB_Absolute.setChecked(True)
-            self.RB_Relative.setChecked(False)
-          else:
-            self.RB_Absolute.setChecked(False)
-            self.RB_Relative.setChecked(True)
-        if tit=="RidgeDetection": self.CB_Ridge.setChecked(value=="True")
-        if tit=="SplitEdge": self.CB_SplitEdge.setChecked(value=="True")
+        if tit=="SwapEdge": self.CB_SwapEdge.setChecked(value=="True")
+        if tit=="InsertEdge": self.CB_InsertEdge.setChecked(value=="True")
+        if tit=="MoveEdge": self.CB_MoveEdge.setChecked(value=="True")
         if tit=="GeometricalApproximation": self.SP_Geomapp.setProperty("value", float(value))
         if tit=="RidgeAngle": self.SP_Ridge.setProperty("value", float(value))
         if tit=="HSize": self.SP_HSize.setProperty("value", float(value))
@@ -489,8 +476,9 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
     deb=os.path.splitext(self.fichierIn)
     self.fichierOut=deb[0] + "_output.mesh"
     
-    if self.CB_Ridge.isChecked()    == False : self.commande+=" --compute_ridges no"
-    if self.CB_SplitEdge.isChecked()== True  : self.commande+=" --element_order quadratic"
+    if self.CB_InsertEdge.isChecked()== True  : self.commande+=" --element_order quadratic" #FIXME
+    if self.CB_SwapEdge.isChecked()== True  : self.commande+=" --element_order quadratic" #FIXME
+    if self.CB_MoveEdge.isChecked()== True  : self.commande+=" --element_order quadratic" #FIXME
     if self.SP_Geomapp.value()      != 15.0  : self.commande+=" --geometric_approximation_angle %f"%self.SP_Geomapp.value()
     if self.SP_Ridge.value()        != 45.0  : self.commande+=" --ridge_angle %f"%self.SP_Ridge.value()
     if self.SP_HSize.value()      != 5     : self.commande+=" --min_size %f"   %self.SP_HSize.value() #FIXME
@@ -519,8 +507,9 @@ class MyMmgsPlugDialog(Ui_MmgsPlugDialog,QWidget):
     self.SP_Geomapp.setProperty("value", 0.01)
     self.SP_Ridge.setProperty("value", 45.0)
     self.SP_Gradation.setProperty("value", 1.3)
-    self.CB_Ridge.setChecked(True)
-    self.CB_SplitEdge.setChecked(False)
+    self.CB_InsertEdge.setChecked(True)
+    self.CB_MoveEdge.setChecked(True)
+    self.CB_SwapEdge.setChecked(True)
     self.SP_HSize.setProperty("value", 0.1)
     #self.PBMeshSmeshPressed() #do not that! problem if done in load surfopt hypo from object browser 
     self.TWOptions.setCurrentIndex(0) # Reset current active tab to the first tab

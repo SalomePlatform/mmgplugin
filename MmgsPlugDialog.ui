@@ -265,55 +265,67 @@
          <x>10</x>
          <y>140</y>
          <width>750</width>
-         <height>81</height>
+         <height>121</height>
         </rect>
        </property>
        <property name="title">
         <string>You can set/unset</string>
        </property>
-       <widget class="QCheckBox" name="CB_Ridge">
+       <widget class="QCheckBox" name="CB_InsertEdge">
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>20</y>
+          <y>30</y>
           <width>271</width>
           <height>25</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>If not set (ridge detection disabled), Yams will not try to detect any new ridge edge by its own mechanism : 
-it will consider as ridge only the ridges given in the mesh. 
-All non-ridge edges that would have been detected as ridge by the ridge angle parameter 
-(see below)  will be considered as part of the same continuous patch.
-This option should not be checked when all the known ridges of the mesh are given and
-when all other possible ridges are not geometric ridges to take into account.</string>
+         <string>If set, Mmgs will not prevent point insertion/deletion</string>
         </property>
         <property name="text">
-         <string>ridge detection</string>
+         <string>insert edge</string>
         </property>
         <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
-       <widget class="QCheckBox" name="CB_SplitEdge">
+       <widget class="QCheckBox" name="CB_MoveEdge">
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>50</y>
+          <y>60</y>
           <width>271</width>
           <height>25</height>
          </rect>
         </property>
         <property name="toolTip">
-         <string>If set, Yams creates new vertices placed on the curved surface and adds them to elements. 
-It means one extra vertex on edge (P2 or quadratic triangles).
-New created vertices are saved in the .mesh file under keyword section 'Vertices'</string>
+         <string>If set, Mmgs will not prevent point relocation</string>
         </property>
         <property name="text">
-         <string>split edge</string>
+         <string>move edge</string>
         </property>
         <property name="checked">
-         <bool>false</bool>
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="CB_SwapEdge">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>90</y>
+          <width>271</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>If set, Mmgs will not prevent edge flipping</string>
+        </property>
+        <property name="text">
+         <string>swap edge</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </widget>
@@ -321,9 +333,9 @@ New created vertices are saved in the .mesh file under keyword section 'Vertices
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>230</y>
+         <y>270</y>
          <width>750</width>
-         <height>270</height>
+         <height>231</height>
         </rect>
        </property>
        <property name="title">
@@ -396,6 +408,12 @@ representation of the boundary and the reconstructed ideal boundary.</string>
           <width>630</width>
           <height>30</height>
          </rect>
+        </property>
+        <property name="toolTip">
+         <string>By default it is set to 45°.
+This means that Mmgs dectects a sharp angle at the
+interface of 2 boundary elements if the angle between their outward
+normals is greater than 45°.</string>
         </property>
         <property name="text">
          <string>If the angle between the normal vectors of two adjacent faces exceeds this value,

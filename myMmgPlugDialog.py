@@ -29,6 +29,7 @@ from qtsalome import *
 
 verbose = True
 
+
 class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
   """
   """
@@ -90,7 +91,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
       QMessageBox.warning(self, "Help", "Help unavailable $SMESH_ROOT_DIR not found")
       return
 
-    maDoc=mydir+"/share/doc/salome/gui/SMESH/yams/index.html"
+    maDoc=mydir+"/share/doc/salome/gui/SMESH/yams/index.html" #FIXME
     sgPyQt.helpContext(maDoc,"")
     
     #maDoc=mydir+"/share/doc/salome/gui/SMESH/yams/_downloads/mg-surfopt_user_manual.pdf"
@@ -139,7 +140,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     monStudyBuilder=maStudy.NewBuilder()
     monStudyBuilder.NewCommand()
     newStudyIter=monStudyBuilder.NewObject(HypReMeshEntry)
-    self.editor.setAttributeValue(newStudyIter, "AttributeName", "MGSurfOpt Parameters_"+str(self.num))
+    self.editor.setAttributeValue(newStudyIter, "AttributeName", "MMG Parameters_"+str(self.num))
     self.editor.setAttributeValue(newStudyIter, "AttributeComment", self.getResumeData(separator=" ; "))
     
     SOMesh=maStudy.FindObjectByName(meshname ,"SMESH")[0]
@@ -164,7 +165,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
   def PBSavePressed(self):
     from datetime import datetime
     if not(self.PrepareLigneCommande()): return
-    text = "# MGSurfOpt hypothesis parameters\n"
+    text = "# MMG hypothesis parameters\n"
     text += "# Params for mesh : " +  self.LE_MeshSmesh.text() +"\n"
     text += datetime.now().strftime("# Date : %d/%m/%y %H:%M:%S\n")
     text += "# Command : "+self.commande+"\n"
@@ -192,9 +193,9 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     
     if verbose: print("save hypothesis in Object Browser")
     
-    name = "MGSurfOpt"
+    name = "MMG"
     #how ??? icon = "mesh_tree_hypo.png"
-    namei = "MGSurfOpt Parameters_%i" % self.num
+    namei = "MMG Parameters_%i" % self.num
     datai = self.getResumeData(separator=" ; ")
     
     myStudy = salome.myStudy
@@ -247,7 +248,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     monStudyBuilder=maStudy.NewBuilder()
     monStudyBuilder.NewCommand()
     newStudyIter=monStudyBuilder.NewObject(HypReMeshEntry)
-    name = "MGSurfOpt Parameters_%i" % self.num
+    name = "MMG Parameters_%i" % self.num
     self.editor.setAttributeValue(newStudyIter, "AttributeName", name)
     data = self.getResumeData(separator=" ; ")
     self.editor.setAttributeValue(newStudyIter, "AttributeComment", data)
@@ -340,7 +341,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
 
     mySObject, myEntry = guihelper.getSObjectSelected()
     if CORBA.is_nil(mySObject) or mySObject==None:
-      QMessageBox.critical(self, "Hypothese", "select an Object Browser MGSurfOpt hypothesis")
+      QMessageBox.critical(self, "Hypothese", "select an Object Browser MMG hypothesis")
       return
     
     text=mySObject.GetComment()
@@ -423,7 +424,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     self.fichierIn=""
 
   def prepareFichier(self):
-    self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForSurfOpt_")
+    self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
     if os.path.exists(self.fichierIn):
         os.remove(self.fichierIn)
     self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
@@ -453,7 +454,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     self.commande+=' -in "'  + self.fichierIn +'"'
     self.commande+=' -out "' + self.fichierOut +'"'
 
-    if verbose: print("INFO: MG-SurfOpt command:\n  %s" % self.commande)
+    if verbose: print("INFO: MMG command:\n  %s" % self.commande)
     return True
 
   def clean(self):
@@ -487,22 +488,3 @@ def getDialog():
   #else :
   #  __dialog.clean()
   return __dialog
-
-#
-# ==============================================================================
-# Basic use cases and unit test functions
-# ==============================================================================
-#
-def TEST_MonYamsPlugDialog():
-  import sys
-  from qtsalome import QApplication
-  app = QApplication(sys.argv)
-  app.lastWindowClosed.connect(app.quit)
-
-  dlg=MonYamsPlugDialog()
-  dlg.show()
-  sys.exit(app.exec_())
-
-if __name__ == "__main__":
-  TEST_MonYamsPlugDialog()
-  pass

@@ -14,6 +14,7 @@ class Values():
         salome.salome_init()
         study = salome.myStudy
         self.smesh_builder = smeshBuilder.New()
+        self.smesh_builder.UpdateStudy()
         if (len(study.FindObjectByName(self.MeshName, 'SMESH')) > 0):
             self.SelectedObject = study.FindObjectByName(self.MeshName, 'SMESH')[-1]
             self.CpyMesh = None

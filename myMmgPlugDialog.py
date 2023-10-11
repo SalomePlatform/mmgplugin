@@ -115,21 +115,29 @@ button.
       QMessageBox.critical(self, "Mesh", "internal error, check the logs")
       return False
     self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.num)
-    self.values.CpyMesh.SetName(self.values.CpyName)
+    if self.values.CpyMesh is not None:
+        self.values.CpyMesh.SetName(self.values.CpyName)
     self.num+=1
     self.values.AnalysisAndRepair()
-    self.MeshIn = self.values.CpyName
-    self.fichierIn=""
-    self.__selectedMesh = self.values.CpyMesh
 
   def PBOKPressed(self):
-    if self.CB_RepairBeforeCompute.isChecked() == True  : self.PBRepairPressed()
+    CpyFichierIn = self.fichierIn
+    CpyMeshIn = self.MeshIn
+    CpySelectedMesh = self.__selectedMesh
+    if self.CB_RepairBeforeCompute.isChecked() == True:
+        self.PBRepairPressed()
+        self.MeshIn = self.values.CpyName
+        self.fichierIn=""
+        self.__selectedMesh = self.values.CpyMesh
     if not(self.PrepareLigneCommande()):
       #warning done yet
       #QMessageBox.warning(self, "Compute", "Command not found")
       return
     
     maFenetre=MyViewText(self,self.commande)
+    self.fichierIn = CpyFichierIn
+    self.MeshIn = CpyMeshIn
+    self.__selectedMesh = CpySelectedMesh
 
   def enregistreResultat(self):
     import salome
@@ -451,6 +459,7 @@ button.
       return
     myName = mySObject.GetName()
 
+    self.values = None
     self.values = Values(myName, 0)
     #print "MeshSmeshNameChanged", myName
     self.MeshIn=myName

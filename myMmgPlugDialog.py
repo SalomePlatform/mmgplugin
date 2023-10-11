@@ -23,6 +23,7 @@
 
 import os, subprocess
 import tempfile
+import re
 from mmgplugin.MyPlugDialog_ui import Ui_MmgPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
@@ -86,31 +87,39 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
 
   def PBHelpPressed(self):
-    import SalomePyQt
-    sgPyQt = SalomePyQt.SalomePyQt()
-    try:
-      mydir=os.environ["SMESH_ROOT_DIR"]
-    except Exception:
-      QMessageBox.warning(self, "Help", "Help unavailable $SMESH_ROOT_DIR not found")
-      return
+    QMessageBox.about(None, "About this MMG remeshing tool",
+            """
+                    Adapt your mesh with MMG
+                    -------------------------------------------
 
-    maDoc=mydir+"/share/doc/salome/gui/SMESH/yams/index.html" #FIXME
-    sgPyQt.helpContext(maDoc,"")
-    
-    #maDoc=mydir+"/share/doc/salome/gui/SMESH/yams/_downloads/mg-surfopt_user_manual.pdf"
-    #command="xdg-open "+maDoc+";"
-    #subprocess.call(command, shell=True)
+This tool allows your to adapt your mesh after a
+Boolean operation. It also allows you to repair a
+bad mesh (double elements or free elements).
+
+By pressing the 'Repair' button, you will generate a
+new mesh prepared for MMG from your input mesh.
+By pressing the 'Compute' button, you will repair
+your imput mesh if needed and adapt it with MMG with
+your selected parameters.
+You can change the parameters to better fit you
+needs than with the default ones. Restore the
+default parameters by clicking on the 'Default'
+button.
+            """)
 
   def PBRepairPressed(self):
     if self.fichierIn=="" and self.MeshIn=="":
       QMessageBox.critical(self, "Mesh", "select an input mesh")
       return False
     if self.values is None:
-      QMessageBox.critical(self, "Mesh", "internal error")
+      QMessageBox.critical(self, "Mesh", "internal error, check the logs")
       return False
-    self.values.AnalysisAndRepair() #FIXME Adapt to fileIn, fileOut, link with self data
+    self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.num)
+    self.values.CpyMesh.SetName(self.values.CpyName)
+    self.num+=1
+    self.values.AnalysisAndRepair()
+    self.MeshIn = self.values.CpyName
     self.fichierIn=""
-    self.MeshIn="StatMesh"
     self.__selectedMesh = self.values.CpyMesh
     self.prepareFichier()
 
@@ -375,7 +384,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
       infile = fd.selectedFiles()[0]
       self.LE_MeshFile.setText(infile)
       self.fichierIn=str(infile)
-      self.values = Values(self.fichierIn)
+      self.values = Values(self.fichierIn, 0)
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
@@ -436,7 +445,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
       return
     myName = mySObject.GetName()
 
-    self.values = Values(myName)
+    self.values = Values(myName, 0)
     #print "MeshSmeshNameChanged", myName
     self.MeshIn=myName
     self.LE_MeshSmesh.setText(myName)

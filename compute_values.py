@@ -1,21 +1,27 @@
 import SMESH
 import salome
+import os
 from salome.smesh import smeshBuilder
 
 class Values():
-    def __init__(self, MeshName):
+    def __init__(self, MeshName, num):
         self.geomapp = 0.01
         self.ridge = 45
         self.hsize = 0.1
         self.hgrad = 1.3
         self.MeshName = MeshName
+        self.CpyName = os.path.basename(os.path.splitext(MeshName)[0]) + '_Repaired_' + str(num)
         salome.salome_init()
         study = salome.myStudy
-        self.SelectedObject = study.FindObjectByName(self.MeshName, 'SMESH')[0]
         self.smesh_builder = smeshBuilder.New()
-        self.MyMesh = self.smesh_builder.Mesh(self.SelectedObject.GetObject(), self.MeshName)
-        self.MyMesh.Compute()
-        self.CpyMesh = None
+        if (len(study.FindObjectByName(self.MeshName, 'SMESH')) > 0):
+            self.SelectedObject = study.FindObjectByName(self.MeshName, 'SMESH')[-1]
+            self.CpyMesh = None
+        else:
+            self.SelectedObject = None
+            self.CpyMesh = self.smesh_builder.CreateMeshesFromGMF(MeshName)[0] #TODO error handling (self.MyMesh[1].code, self.MyMesh[1].hasBadMesh)
+            self.CpyMesh.SetName(self.CpyName)
+
         self.AvgAspects = 0
 
         self.FreeNodes = []
@@ -30,7 +36,7 @@ class Values():
 
     def GetInfoFromFilter(self, ElementType, FilterName):
         aFilter = self.smesh_builder.GetFilter(ElementType, FilterName)
-        return self.MyMesh.GetIdsFromFilter(aFilter)
+        return self.CpyMesh.GetIdsFromFilter(aFilter)
 
     def FillInfos(self):
         # Get the faces aspect ratios
@@ -57,7 +63,8 @@ class Values():
         pass
 
     def AnalysisAndRepair(self):
-        self.CpyMesh = self.smesh_builder.CopyMesh(self.SelectedObject.GetObject(), 'StatMesh', True, True)
+        if (self.CpyMesh is None) and (self.SelectedObject is not None):
+            self.CpyMesh = self.smesh_builder.CopyMesh(self.SelectedObject.GetObject(), self.CpyName, True, True)
         self.FillInfos()
 
         if len(self.FreeEdges) != 0:
@@ -70,10 +77,16 @@ class Values():
         
         if len(self.CoincidentNodes) != 0:
             self.CpyMesh.MergeNodes(self.CoincidentNodes)
+
+        #TODO Remove the double faces by increasing treshold and merging elements
+
         self.FillInfos()
+        self.CpyMesh.Compute()
         self.smesh_builder.UpdateStudy()
+        if salome.sg.hasDesktop(): salome.sg.updateObjBrowser()
 
     def DeleteMesh(self):
         if self.CpyMesh is not None:
             self.smesh_builder.RemoveMesh(self.CpyMesh)
+        if salome.sg.hasDesktop(): salome.sg.updateObjBrowser()
 

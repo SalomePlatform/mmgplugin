@@ -36,16 +36,16 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="PB_OK">
+      <widget class="QPushButton" name="PB_Repair">
        <property name="text">
-        <string>Compute</string>
+        <string>Repair</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="PB_Cancel">
+      <widget class="QPushButton" name="PB_OK">
        <property name="text">
-        <string>Close</string>
+        <string>Compute</string>
        </property>
       </widget>
      </item>
@@ -112,11 +112,18 @@
       <widget class="QPushButton" name="PB_Help">
        <property name="font">
         <font>
-         <pointsize>10</pointsize>
+         <pointsize>11</pointsize>
         </font>
        </property>
        <property name="text">
         <string>Help</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="PB_Cancel">
+       <property name="text">
+        <string>Close</string>
        </property>
       </widget>
      </item>

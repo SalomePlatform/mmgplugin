@@ -1,6 +1,7 @@
 import subprocess
 import re
 import os
+import time
 import shutil
 from collections import defaultdict
 import numpy as np
@@ -14,7 +15,7 @@ logger = Logger()
 logger.set_level("info")
 
 results_dict = defaultdict(list)
-bounding_box_needed = True
+bounding_box_needed = False
 logger.info("bounding box calculation : " + str(bounding_box_needed))
 
 def perform_analysis(path):
@@ -359,8 +360,8 @@ def main():
     #perform_hausd_variations()
 
     """
-    set_output_plot_path('hausd_hgrad')
-    perform_hausd_hgrad_variations()
+    set_output_plot_path('hausd_hsiz')
+    perform_hsiz_hausd_gnu_plot()
 
     set_output_plot_path('hmin_hmax')
     perform_hmin_hmax_variations()
@@ -373,10 +374,44 @@ def main():
 
     set_output_plot_path('hausd_box')
     perform_hausd_box_variations()
+
+    set_output_plot_path('hausd_hgrad')
+    perform_hausd_hgrad_variations()
+    """
+    """
+    hgrad_values = np.linspace(1, 1.4, 100)
+    quality_measures = [0]*len(hgrad_values)
+    for file_path in perform_mesh_ls():
+        file_name = file_path.split('/')[-1]
+        output_file_name = os.path.join(OUTPUT_PATH, file_name[:-4] + "o.mesh")
+        execution_time = [0]*len(hgrad_values)
+
+        for i, _ in enumerate(hgrad_values):
+            start_time = time.time()
+            perform_remeshing(file_path, hausd=None, hgrad=hgrad_values[i], hmin=None, hmax=None, hsiz=None)
+            value = perform_analysis(output_file_name)
+            results_dict[file_name].append(value)
+
+            quality_measures[i] = value.quality
+
+            end_time = time.time()
+            execution_time[i] = (end_time - start_time)*50000
+
+        index = 0
+        for i, _ in enumerate(quality_measures):
+            if quality_measures[i] > quality_measures[index]:
+                index = i
+
+        fig, ax = plt.subplots()
+
+        ax.plot(hgrad_values, quality_measures, label='quality')
+
+        ax.plot(hgrad_values, execution_time, label='time * 50000')
+
+        ax.legend()
+        plt.show()
     """
 
-    set_output_plot_path('hausd_hsiz')
-    perform_hsiz_hausd_gnu_plot()
 
 if __name__ == "__main__":
     main()

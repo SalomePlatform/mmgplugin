@@ -26,6 +26,7 @@ import tempfile
 from mmgplugin.MyPlugDialog_ui import Ui_MmgPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
+from mmgplugin.compute_values import *
 
 verbose = True
 
@@ -43,6 +44,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     self.commande=""
     self.num=1
     self.__selectedMesh=None
+    self.values = None
 
     # complex with QResources: not used
     # The icon are supposed to be located in the $SMESH_ROOT_DIR/share/salome/resources/smesh folder,
@@ -74,6 +76,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     self.PB_Cancel.clicked.connect(self.PBCancelPressed)
     self.PB_Default.clicked.connect(self.clean)
     self.PB_Help.clicked.connect(self.PBHelpPressed)
+    self.PB_Repair.clicked.connect(self.PBRepairPressed)
     self.PB_OK.clicked.connect(self.PBOKPressed)
     
     self.PB_LoadHyp.clicked.connect(self.PBLoadHypPressed)
@@ -98,11 +101,25 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     #command="xdg-open "+maDoc+";"
     #subprocess.call(command, shell=True)
 
+  def PBRepairPressed(self):
+    if self.fichierIn=="" and self.MeshIn=="":
+      QMessageBox.critical(self, "Mesh", "select an input mesh")
+      return False
+    if self.values is None:
+      QMessageBox.critical(self, "Mesh", "internal error")
+      return False
+    self.values.AnalysisAndRepair() #FIXME Adapt to fileIn, fileOut, link with self data
+    self.fichierIn=""
+    self.MeshIn="StatMesh"
+    self.__selectedMesh = self.values.CpyMesh
+    self.prepareFichier()
+
   def PBOKPressed(self):
     if not(self.PrepareLigneCommande()):
       #warning done yet
       #QMessageBox.warning(self, "Compute", "Command not found")
       return
+    
     maFenetre=MyViewText(self,self.commande)
 
   def enregistreResultat(self):
@@ -358,6 +375,7 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
       infile = fd.selectedFiles()[0]
       self.LE_MeshFile.setText(infile)
       self.fichierIn=str(infile)
+      self.values = Values(self.fichierIn)
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
@@ -417,6 +435,8 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
       QMessageBox.critical(self, "Mesh", "select an input mesh")
       return
     myName = mySObject.GetName()
+
+    self.values = Values(myName)
     #print "MeshSmeshNameChanged", myName
     self.MeshIn=myName
     self.LE_MeshSmesh.setText(myName)
@@ -427,7 +447,10 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
     if os.path.exists(self.fichierIn):
         os.remove(self.fichierIn)
-    self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
+    if str(type(self.__selectedMesh)) == "<class 'salome.smesh.smeshBuilder.Mesh'>":
+        self.__selectedMesh.ExportGMF(self.fichierIn)
+    else:
+        self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
 
   def PrepareLigneCommande(self):
     if self.fichierIn=="" and self.MeshIn=="":
@@ -466,13 +489,19 @@ class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
     #self.RB_1.setChecked(False)
     #no need: exlusives QRadioButton
     #self.RB_Absolute.setChecked(False)
-    self.SP_Geomapp.setProperty("value", 0.01)
-    self.SP_Ridge.setProperty("value", 45.0)
-    self.SP_Gradation.setProperty("value", 1.3)
+    if self.values is not None:
+        self.SP_Geomapp.setProperty("value", self.values.geomapp)
+        self.SP_Ridge.setProperty("value", self.values.ridge)
+        self.SP_Gradation.setProperty("value", self.values.hgrad)
+        self.SP_HSize.setProperty("value", self.values.hsize)
+    else: # No file provided, default from MMG
+        self.SP_Geomapp.setProperty("value", 0.01)
+        self.SP_Ridge.setProperty("value", 45.0)
+        self.SP_Gradation.setProperty("value", 1.3)
+        self.SP_HSize.setProperty("value", 0.1)
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)
-    self.SP_HSize.setProperty("value", 0.1)
     #self.PBMeshSmeshPressed() #do not that! problem if done in load surfopt hypo from object browser 
     self.TWOptions.setCurrentIndex(0) # Reset current active tab to the first tab
 

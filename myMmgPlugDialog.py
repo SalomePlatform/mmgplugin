@@ -121,9 +121,9 @@ button.
     self.MeshIn = self.values.CpyName
     self.fichierIn=""
     self.__selectedMesh = self.values.CpyMesh
-    self.prepareFichier()
 
   def PBOKPressed(self):
+    if self.CB_RepairBeforeCompute.isChecked() == True  : self.PBRepairPressed()
     if not(self.PrepareLigneCommande()):
       #warning done yet
       #QMessageBox.warning(self, "Compute", "Command not found")
@@ -148,9 +148,13 @@ button.
     initialMeshFile=None
     initialMeshObject=None
     if name=="":
-      a=str(self.fichierIn)
+      if self.MeshIn =="":
+          a = re.sub(r'_\d*$', '', str(self.fichierIn))
+      else: # Repaired
+          a = re.sub(r'_\d*$', '', str(self.MeshIn))
       name=os.path.basename(os.path.splitext(a)[0])
       initialMeshFile=a
+
     else:
       initialMeshObject=maStudy.FindObjectByName(name ,"SMESH")[0]
 
@@ -312,6 +316,7 @@ button.
 
   def getResumeData(self, separator="\n"):
     text=""
+    text+="RepairBeforeCompute="+str(self.CB_RepairBeforeCompute.isChecked())+separator
     text+="SwapEdge="+str(self.CB_SwapEdge.isChecked())+separator
     text+="MoveEdge="+str(self.CB_MoveEdge.isChecked())+separator
     text+="InsertEdge="+str(self.CB_InsertEdge.isChecked())+separator
@@ -331,6 +336,7 @@ button.
       if lig[0]=="#": break
       try:
         tit,value=lig.split("=")
+        if tit=="RepairBeforeCompute": self.CB_RepairBeforeCompute.setChecked(value=="True")
         if tit=="SwapEdge": self.CB_SwapEdge.setChecked(value=="True")
         if tit=="InsertEdge": self.CB_InsertEdge.setChecked(value=="True")
         if tit=="MoveEdge": self.CB_MoveEdge.setChecked(value=="True")
@@ -508,6 +514,7 @@ button.
         self.SP_Ridge.setProperty("value", 45.0)
         self.SP_Gradation.setProperty("value", 1.3)
         self.SP_HSize.setProperty("value", 0.1)
+    self.CB_RepairBeforeCompute.setChecked(True)
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)

@@ -272,7 +272,7 @@
          <x>10</x>
          <y>140</y>
          <width>750</width>
-         <height>121</height>
+         <height>151</height>
         </rect>
        </property>
        <property name="title">
@@ -282,7 +282,7 @@
         <property name="geometry">
          <rect>
           <x>30</x>
-          <y>30</y>
+          <y>117</y>
           <width>271</width>
           <height>25</height>
          </rect>
@@ -335,14 +335,33 @@
          <bool>true</bool>
         </property>
        </widget>
+       <widget class="QCheckBox" name="CB_RepairBeforeCompute">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>30</y>
+          <width>271</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="toolTip">
+         <string>If set, Mmg will not prevent edge flipping</string>
+        </property>
+        <property name="text">
+         <string>auto repair before computing</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
       </widget>
       <widget class="QGroupBox" name="groupBox_3">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>270</y>
+         <y>300</y>
          <width>750</width>
-         <height>231</height>
+         <height>201</height>
         </rect>
        </property>
        <property name="title">

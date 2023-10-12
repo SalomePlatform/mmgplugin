@@ -24,7 +24,7 @@
 import os, subprocess
 import tempfile
 import re
-from mmgplugin.MyPlugDialog_ui import Ui_MmgPlugDialog
+from mmgplugin.MyPlugDialog_ui import Ui_MyPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
 from mmgplugin.compute_values import *
@@ -32,7 +32,7 @@ from mmgplugin.compute_values import *
 verbose = True
 
 
-class MyMmgPlugDialog(Ui_MmgPlugDialog,QWidget):
+class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
   """
   """
   def __init__(self):
@@ -353,7 +353,7 @@ button.
         if tit=="HSize": self.SP_HSize.setProperty("value", float(value))
         if tit=="MeshGradation": self.SP_Gradation.setProperty("value", float(value))
       except:
-        QMessageBox.warning(self, "load MGSurfOpt Hypothesis", "Problem on '"+lig+"'")
+        QMessageBox.warning(self, "load MMG Hypothesis", "Problem on '"+lig+"'")
 
   def PBLoadPressed(self):
     """load last hypothesis saved in tail of file"""

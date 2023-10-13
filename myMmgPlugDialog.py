@@ -56,10 +56,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     #print "MGSurfOptPlugDialog iconfolder",iconfolder
     icon = QIcon()
     icon.addFile(os.path.join(self.iconfolder,"select1.png"))
-    self.PB_LoadHyp.setIcon(icon)
-    self.PB_LoadHyp.setToolTip("hypothesis from Salome Object Browser")
-    self.PB_SaveHyp.setIcon(icon)
-    self.PB_SaveHyp.setToolTip("hypothesis to Salome Object Browser")
     self.PB_MeshSmesh.setIcon(icon)
     self.PB_MeshSmesh.setToolTip("source mesh from Salome Object Browser")
     icon = QIcon()
@@ -69,9 +65,14 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
 
     self.LE_MeshFile.setText("")
     self.LE_MeshSmesh.setText("")
+    self.LE_SandboxL_1.setText("")
+    self.LE_SandboxR_1.setText("")
+
+    self.sandboxes = [(self.LE_SandboxL_1, self.LE_SandboxR_1)]
 
     self.resize(800, 600)
     self.clean()
+    self.NbOptParam = 0
 
   def connecterSignaux(self) :
     self.PB_Cancel.clicked.connect(self.PBCancelPressed)
@@ -80,11 +81,41 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.PB_Repair.clicked.connect(self.PBRepairPressed)
     self.PB_OK.clicked.connect(self.PBOKPressed)
     
-    self.PB_LoadHyp.clicked.connect(self.PBLoadHypPressed)
-    self.PB_SaveHyp.clicked.connect(self.PBSaveHypPressed)
-    
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
+    self.PB_Plus.clicked.connect(self.PBPlusPressed)
+
+  def PBPlusPressed(self):
+    for elt in self.sandboxes:
+      if elt[0].text() == "":
+        QMessageBox.warning(self, "Sandbox", "There is an empty line.")
+        return
+    self.NbOptParam+=1
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+    sizePolicy.setHorizontalStretch(0)
+    sizePolicy.setVerticalStretch(0)
+
+    self.LE_SandboxL = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    sizePolicy.setHeightForWidth(self.LE_SandboxL.sizePolicy().hasHeightForWidth())
+    self.LE_SandboxL.setSizePolicy(sizePolicy)
+    self.LE_SandboxL.setMinimumSize(QtCore.QSize(0, 30))
+    self.LE_SandboxL.setObjectName("LE_SandboxL_" + str(self.NbOptParam + 1))
+    self.gridLayout_5.addWidget(self.LE_SandboxL, self.NbOptParam + 1, 0, 1, 1)
+
+    self.LE_SandboxR = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    sizePolicy.setHeightForWidth(self.LE_SandboxR.sizePolicy().hasHeightForWidth())
+    self.LE_SandboxR.setSizePolicy(sizePolicy)
+    self.LE_SandboxR.setMinimumSize(QtCore.QSize(0, 30))
+    self.LE_SandboxR.setObjectName("LE_SandboxR_" + str(self.NbOptParam + 1))
+    self.gridLayout_5.addWidget(self.LE_SandboxR, self.NbOptParam + 1, 1, 1, 1)
+
+    spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    self.gridLayout_5.addItem(spacerItem1, self.NbOptParam + 2, 0, 1, 1)
+    spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    self.gridLayout_5.addItem(spacerItem2, self.NbOptParam + 2, 1, 1, 1)
+
+    self.sandboxes.append((self.LE_SandboxL, self.LE_SandboxR))
 
   def PBHelpPressed(self):
     QMessageBox.about(None, "About this MMG remeshing tool",
@@ -222,80 +253,6 @@ button.
       return
     f.close()
 
-  def PBSaveHypPressed_risky(self):
-    """
-    save hypothesis in Object Browser outside GEOM ou MESH
-    WARNING: at root of Object Browser is not politically correct
-    """
-    import salome
-    
-    if verbose: print("save hypothesis in Object Browser")
-    
-    name = "MMG"
-    #how ??? icon = "mesh_tree_hypo.png"
-    namei = "MMG Parameters_%i" % self.num
-    datai = self.getResumeData(separator=" ; ")
-    
-    myStudy = salome.myStudy
-    myBuilder = myStudy.NewBuilder()
-    #myStudy.IsStudyLocked()
-    myComponent = myStudy.FindComponent(name)
-    if myComponent == None:
-      print("myComponent not found, create")
-      myComponent = myBuilder.NewComponent(name)
-    AName = myBuilder.FindOrCreateAttribute(myComponent, "AttributeName")
-    AName.SetValue(name)
-    ACmt = myBuilder.FindOrCreateAttribute(myComponent, "AttributeComment")
-    ACmt.SetValue(name)
-    
-    myObject = myBuilder.NewObject(myComponent)
-    AName = myBuilder.FindOrCreateAttribute(myObject, "AttributeName")
-    AName.SetValue(namei)
-    ACmt = myBuilder.FindOrCreateAttribute(myObject, "AttributeComment")
-    ACmt.SetValue(datai)
-
-    if salome.sg.hasDesktop(): salome.sg.updateObjBrowser()
-    self.num += 1
-    if verbose: print(("save %s in Object Browser done: %s\n%s" % (name, myObject.GetID(), datai)))
-    return True
-
-  def PBSaveHypPressed(self):
-    """
-    save hypothesis in Object Browser
-    bug: affichage ne marche pas si inclusion dans dans GEOM ou MESH depuis salome 730
-    """
-    import salome
-    import SMESH
-    from salome.kernel import studyedit
-    from salome.smesh import smeshBuilder
-    #[PAL issue tracker:issue1871] Les nouveaux objets ne s'affichent pas dans SMESH
-    QMessageBox.warning(self, "Save", "waiting for fix: Object Browser will not display hypothesis")
-    
-    if verbose: print("save hypothesis in Object Browser")
-    smesh = smeshBuilder.New()
-
-    maStudy=salome.myStudy
-    smesh.UpdateStudy()
-
-    self.editor = studyedit.getStudyEditor()
-    moduleEntry=self.editor.findOrCreateComponent("SMESH","SMESH")
-    HypReMeshEntry = self.editor.findOrCreateItem(
-        moduleEntry, name = "Plugins Hypotheses", icon="mesh_tree_hypo.png")
-    #, comment = "HypothesisForRemeshing" )
-
-    monStudyBuilder=maStudy.NewBuilder()
-    monStudyBuilder.NewCommand()
-    newStudyIter=monStudyBuilder.NewObject(HypReMeshEntry)
-    name = "MMG Parameters_%i" % self.num
-    self.editor.setAttributeValue(newStudyIter, "AttributeName", name)
-    data = self.getResumeData(separator=" ; ")
-    self.editor.setAttributeValue(newStudyIter, "AttributeComment", data)
-    
-    if salome.sg.hasDesktop(): salome.sg.updateObjBrowser()
-    self.num += 1
-    if verbose: print(("save %s in Object Browser done:\n%s" % (name, data)))
-    return True
-
   def SP_toStr(self, widget):
     """only for a QLineEdit widget"""
     #cr, pos=widget.validator().validate(res, 0) #n.b. "1,3" is acceptable !locale!
@@ -355,7 +312,6 @@ button.
       except:
         QMessageBox.warning(self, "load MMG Hypothesis", "Problem on '"+lig+"'")
 
-  def PBLoadPressed(self):
     """load last hypothesis saved in tail of file"""
     try:
       f=open(self.paramsFile,"r")
@@ -370,25 +326,6 @@ button.
     f.close()
     self.loadResumeData(text, separator="\n")
 
-  def PBLoadHypPressed(self):
-    """load hypothesis saved in Object Browser"""
-    #QMessageBox.warning(self, "load Object Browser MGSurfOpt hypothesis", "TODO")
-    import salome
-    from salome.kernel import studyedit
-    from salome.smesh.smeshstudytools import SMeshStudyTools
-    from salome.gui import helper as guihelper
-    from omniORB import CORBA
-
-    mySObject, myEntry = guihelper.getSObjectSelected()
-    if CORBA.is_nil(mySObject) or mySObject==None:
-      QMessageBox.critical(self, "Hypothese", "select an Object Browser MMG hypothesis")
-      return
-    
-    text=mySObject.GetComment()
-    
-    self.loadResumeData(text, separator=" ; ")
-    return
-    
   def PBCancelPressed(self):
     self.close()
 
@@ -527,6 +464,43 @@ button.
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)
+
+    from PyQt5 import QtCore, QtGui, QtWidgets
+    _translate = QtCore.QCoreApplication.translate
+    for i in reversed(range(self.gridLayout_5.count())):
+        widget = self.gridLayout_5.takeAt(i).widget()
+        if widget is not None:
+            widget.setParent(None)
+    self.LE_SandboxR_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxR_1.setMinimumSize(QtCore.QSize(0, 30))
+    self.LE_SandboxR_1.setObjectName("LE_SandboxR_1")
+    self.gridLayout_5.addWidget(self.LE_SandboxR_1, 1, 1, 1, 1)
+    self.label_3 = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+    self.label_3.setObjectName("label_3")
+    self.gridLayout_5.addWidget(self.label_3, 0, 1, 1, 1)
+    self.LE_SandboxL_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+    sizePolicy.setHorizontalStretch(0)
+    sizePolicy.setVerticalStretch(0)
+    sizePolicy.setHeightForWidth(self.LE_SandboxL_1.sizePolicy().hasHeightForWidth())
+    self.LE_SandboxL_1.setSizePolicy(sizePolicy)
+    self.LE_SandboxL_1.setMinimumSize(QtCore.QSize(0, 30))
+    self.LE_SandboxL_1.setObjectName("LE_SandboxL_1")
+    self.gridLayout_5.addWidget(self.LE_SandboxL_1, 1, 0, 1, 1)
+    spacerItem16 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    self.gridLayout_5.addItem(spacerItem16, 2, 0, 1, 1)
+    spacerItem17 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    self.gridLayout_5.addItem(spacerItem17, 2, 1, 1, 1)
+    self.label_2 = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+    self.label_2.setObjectName("label_2")
+    self.gridLayout_5.addWidget(self.label_2, 0, 0, 1, 1)
+    self.label_3.setText(_translate("MyPlugDialog", "Value"))
+    self.label_2.setText(_translate("MyPlugDialog", "Parameter"))
+
+    self.LE_SandboxL_1.setText("")
+    self.LE_SandboxR_1.setText("")
+    self.sandboxes = [(self.LE_SandboxL_1, self.LE_SandboxR_1)]
+
     #self.PBMeshSmeshPressed() #do not that! problem if done in load surfopt hypo from object browser 
     self.TWOptions.setCurrentIndex(0) # Reset current active tab to the first tab
 

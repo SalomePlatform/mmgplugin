@@ -422,14 +422,20 @@ button.
       QMessageBox.critical(self, "File", "unable to read GMF Mesh in "+str(self.fichierIn))
       return False
     
-    self.commande="mmgs_O3"
+    self.commande=""
+    if self.RB_MMG2D.isChecked() : self.commande="mmg2d_O3"
+    if self.RB_MMG3D.isChecked() : self.commande="mmg3d_O3"
+    if self.RB_MMGS.isChecked() : self.commande="mmgs_O3"
 
     deb=os.path.splitext(self.fichierIn)
     self.fichierOut=deb[0] + "_output.mesh"
     
-    if self.CB_InsertEdge.isChecked()== False  : self.commande+=" -noinsert"
-    if self.CB_SwapEdge.isChecked()== False  : self.commande+=" -noswap"
-    if self.CB_MoveEdge.isChecked()== False  : self.commande+=" -nomove"
+    for elt in self.sandboxes:
+        self.commande+=' ' + elt[0].text() + ' ' + elt[1].text()
+    
+    if not self.CB_InsertEdge.isChecked() : self.commande+=" -noinsert"
+    if not self.CB_SwapEdge.isChecked()  : self.commande+=" -noswap"
+    if not self.CB_MoveEdge.isChecked()  : self.commande+=" -nomove"
     if self.SP_Geomapp.value() != 0.01 : self.commande+=" -hausd %f"%self.SP_Geomapp.value()
     if self.SP_Ridge.value() != 45.0  : self.commande+=" -ar %f"%self.SP_Ridge.value()
     self.commande+=" -hsiz %f"   %self.SP_HSize.value()
@@ -442,14 +448,6 @@ button.
     return True
 
   def clean(self):
-    #no need: exlusives QRadioButton
-    #self.RB_G.setChecked(False)
-    #self.RB_U.setChecked(False)
-    #self.RB_S.setChecked(False)
-    #self.RB_2.setChecked(False)
-    #self.RB_1.setChecked(False)
-    #no need: exlusives QRadioButton
-    #self.RB_Absolute.setChecked(False)
     if self.values is not None:
         self.SP_Geomapp.setProperty("value", self.values.geomapp)
         self.SP_Ridge.setProperty("value", self.values.ridge)
@@ -464,6 +462,7 @@ button.
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)
+    self.RB_MMGS.setChecked(True)
 
     from PyQt5 import QtCore, QtGui, QtWidgets
     _translate = QtCore.QCoreApplication.translate

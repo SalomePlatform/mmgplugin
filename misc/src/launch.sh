@@ -1,5 +1,6 @@
 #!/bin/sh
 mkdir -p ../mesh_data/output
+mkdir -p ../mesh_data/study_meshes
 mkdir -p ../studies/hausd_hgrad/contour
 mkdir -p ../studies/hausd_hgrad/surface
 

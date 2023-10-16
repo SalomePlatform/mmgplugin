@@ -26,6 +26,7 @@ def quit_salome():
         raise
 
 def load_geometry(input_file):
+    print(f'Loading {input_file}...')
     try:
         exec(compile(open(input_file, 'rb').read(), input_file, 'exec'))
 
@@ -36,7 +37,6 @@ def load_geometry(input_file):
         study = salome.myStudy
         smesh.UpdateStudy()
         name = os.path.splitext(os.path.basename(input_file))[0]
-        print(name, input_file)
         SO = study.FindObjectByName(name, 'SMESH')[0]
         mesh = smesh.Mesh(SO.GetObject(), name)
 
@@ -46,6 +46,7 @@ def load_geometry(input_file):
         raise
 
 def export_mesh(mesh, mesh_file):
+    print(f'Exporting the mesh from {mesh_file}...')
     try:
         mesh.ExportGMF(mesh_file)
 
@@ -84,8 +85,9 @@ def main():
 
     for input_file in perform_py_ls():
         mesh_file = create_mesh_file(input_file, OUTPUT_PATH)
+        print(f"Mesh file generated: {mesh_file}")
+        print('----------------')
 
-    print(f"Mesh file generated: {mesh_file}")
 
 if __name__ == "__main__":
     main()

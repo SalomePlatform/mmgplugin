@@ -5,7 +5,7 @@ import subprocess
 
 ROOT_PATH = '.'
 LS_PATH = os.path.join(ROOT_PATH, 'archive_meshes')
-OUTPUT_PATH = os.path.join(ROOT_PATH, 'study_meshes')
+OUTPUT_PATH = os.path.join(ROOT_PATH, 'archive_meshes')
 
 def start_salome():
     try:

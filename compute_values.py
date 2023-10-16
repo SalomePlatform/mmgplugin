@@ -84,7 +84,8 @@ class Values():
         self.FillInfos()
         self.CpyMesh.Compute()
         self.smesh_builder.UpdateStudy()
-        if salome.sg.hasDesktop(): salome.sg.updateObjBrowser()
+        if salome.sg.hasDesktop() and not self.CpyName.endswith('_0'):
+            salome.sg.updateObjBrowser()
 
     def DeleteMesh(self):
         if self.CpyMesh is not None:

@@ -145,8 +145,11 @@ button.
     if self.values is None:
       QMessageBox.critical(self, "Mesh", "internal error, check the logs")
       return False
+    if self.values.CpyName.endswith('_0'):
+        self.values.DeleteMesh()
     self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.num)
     if self.values.CpyMesh is not None:
+        self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromGMF(self.values.MeshName)[0]
         self.values.CpyMesh.SetName(self.values.CpyName)
     self.num+=1
     self.values.AnalysisAndRepair()
@@ -155,7 +158,7 @@ button.
     CpyFichierIn = self.fichierIn
     CpyMeshIn = self.MeshIn
     CpySelectedMesh = self.__selectedMesh
-    if self.CB_RepairBeforeCompute.isChecked() == True:
+    if self.CB_RepairBeforeCompute.isChecked() and self.RB_MMGS.isChecked():
         self.PBRepairPressed()
         self.MeshIn = self.values.CpyName
         self.fichierIn=""

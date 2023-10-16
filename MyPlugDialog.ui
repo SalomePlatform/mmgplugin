@@ -26,7 +26,7 @@
    <property name="sizeConstraint">
     <enum>QLayout::SetNoConstraint</enum>
    </property>
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QTabWidget" name="TWOptions">
      <property name="enabled">
       <bool>true</bool>
@@ -49,7 +49,7 @@
       <bool>false</bool>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -448,6 +448,12 @@ representation of the boundary and the reconstructed ideal boundary.</string>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
@@ -498,6 +504,12 @@ representation of the boundary and the reconstructed ideal boundary.</string>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
@@ -512,6 +524,12 @@ representation of the boundary and the reconstructed ideal boundary.</string>
               <horstretch>1</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
             </property>
             <property name="text">
              <string>Mesh Object Browser</string>
@@ -529,6 +547,12 @@ representation of the boundary and the reconstructed ideal boundary.</string>
           </item>
           <item row="0" column="2">
            <widget class="QLineEdit" name="LE_MeshSmesh">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <pointsize>10</pointsize>
@@ -654,7 +678,7 @@ representation of the boundary and the reconstructed ideal boundary.</string>
                <x>0</x>
                <y>0</y>
                <width>639</width>
-               <height>245</height>
+               <height>209</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_6">
@@ -750,25 +774,6 @@ representation of the boundary and the reconstructed ideal boundary.</string>
           <property name="sizeConstraint">
            <enum>QLayout::SetNoConstraint</enum>
           </property>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="CB_RepairBeforeCompute">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <kerning>true</kerning>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If not set, your mesh won't be repaired before being remeshed by MMG.&lt;/p&gt;&lt;p&gt;Note that your mesh might not be valid for MMG.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>auto repair before computing</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <spacer name="horizontalSpacer_2">
             <property name="orientation">
@@ -791,6 +796,48 @@ representation of the boundary and the reconstructed ideal boundary.</string>
              <size>
               <width>20</width>
               <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="CB_RepairBeforeCompute">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If not set, your mesh won't be repaired before being remeshed by MMG.&lt;/p&gt;&lt;p&gt;Note that your mesh might not be valid for MMG.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>auto repair before computing</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="CB_RepairOnly">
+            <property name="toolTip">
+             <string>If set, MMG will not be called and only the repair process will be launched</string>
+            </property>
+            <property name="text">
+             <string>Only repair</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <spacer name="horizontalSpacer_15">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -838,8 +885,8 @@ representation of the boundary and the reconstructed ideal boundary.</string>
      </widget>
     </widget>
    </item>
-   <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
+   <item row="3" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout2">
      <item>
       <spacer name="horizontalSpacer_xx">
        <property name="orientation">
@@ -865,13 +912,6 @@ representation of the boundary and the reconstructed ideal boundary.</string>
        </property>
        <property name="text">
         <string>Help</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="PB_Cancel">
-       <property name="text">
-        <string>Close</string>
        </property>
       </widget>
      </item>
@@ -909,9 +949,9 @@ representation of the boundary and the reconstructed ideal boundary.</string>
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="PB_Repair">
+      <widget class="QPushButton" name="PB_Cancel">
        <property name="text">
-        <string>Repair</string>
+        <string>Close</string>
        </property>
       </widget>
      </item>
@@ -939,6 +979,9 @@ representation of the boundary and the reconstructed ideal boundary.</string>
       </spacer>
      </item>
     </layout>
+   </item>
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout1"/>
    </item>
   </layout>
  </widget>

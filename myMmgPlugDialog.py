@@ -78,7 +78,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.PB_Cancel.clicked.connect(self.PBCancelPressed)
     self.PB_Default.clicked.connect(self.clean)
     self.PB_Help.clicked.connect(self.PBHelpPressed)
-    self.PB_Repair.clicked.connect(self.PBRepairPressed)
     self.PB_OK.clicked.connect(self.PBOKPressed)
     
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
@@ -138,7 +137,7 @@ default parameters by clicking on the 'Default'
 button.
             """)
 
-  def PBRepairPressed(self):
+  def Repair(self):
     if self.fichierIn=="" and self.MeshIn=="":
       QMessageBox.critical(self, "Mesh", "select an input mesh")
       return False
@@ -155,20 +154,30 @@ button.
     self.values.AnalysisAndRepair()
 
   def PBOKPressed(self):
+    if self.fichierIn=="" and self.MeshIn=="":
+      QMessageBox.critical(self, "Mesh", "select an input mesh")
+      return False
     CpyFichierIn = self.fichierIn
     CpyMeshIn = self.MeshIn
     CpySelectedMesh = self.__selectedMesh
-    if self.CB_RepairBeforeCompute.isChecked() and self.RB_MMGS.isChecked():
-        self.PBRepairPressed()
+    if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.RB_MMGS.isChecked():
+        if self.values is None:
+            if self.fichierIn != "":
+                self.values = Values(self.fichierIn, 0)
+            else:
+                self.values = Values(self.MeshIn, 0)
+        self.Repair()
         self.MeshIn = self.values.CpyName
         self.fichierIn=""
         self.__selectedMesh = self.values.CpyMesh
-    if not(self.PrepareLigneCommande()):
-      #warning done yet
-      #QMessageBox.warning(self, "Compute", "Command not found")
-      return
-    
-    maFenetre=MyViewText(self,self.commande)
+    if not self.CB_RepairOnly.isChecked():
+        if not(self.PrepareLigneCommande()):
+          #warning done yet
+          #QMessageBox.warning(self, "Compute", "Command not found")
+          return
+        
+        maFenetre=MyViewText(self,self.commande)
+
     self.fichierIn = CpyFichierIn
     self.MeshIn = CpyMeshIn
     self.__selectedMesh = CpySelectedMesh
@@ -338,7 +347,7 @@ button.
       infile = fd.selectedFiles()[0]
       self.LE_MeshFile.setText(infile)
       self.fichierIn=str(infile)
-      self.values = Values(self.fichierIn, 0)
+      #self.values = Values(self.fichierIn, 0)
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
@@ -400,7 +409,7 @@ button.
     myName = mySObject.GetName()
 
     self.values = None
-    self.values = Values(myName, 0)
+    #self.values = Values(myName, 0)
     #print "MeshSmeshNameChanged", myName
     self.MeshIn=myName
     self.LE_MeshSmesh.setText(myName)

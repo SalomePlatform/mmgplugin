@@ -91,28 +91,22 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
         return
     self.NbOptParam+=1
     from PyQt5 import QtCore, QtGui, QtWidgets
-    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-    sizePolicy.setHorizontalStretch(0)
-    sizePolicy.setVerticalStretch(0)
-
     self.LE_SandboxL = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
-    sizePolicy.setHeightForWidth(self.LE_SandboxL.sizePolicy().hasHeightForWidth())
-    self.LE_SandboxL.setSizePolicy(sizePolicy)
     self.LE_SandboxL.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxL.setObjectName("LE_SandboxL_" + str(self.NbOptParam + 1))
     self.gridLayout_5.addWidget(self.LE_SandboxL, self.NbOptParam + 1, 0, 1, 1)
 
     self.LE_SandboxR = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
-    sizePolicy.setHeightForWidth(self.LE_SandboxR.sizePolicy().hasHeightForWidth())
-    self.LE_SandboxR.setSizePolicy(sizePolicy)
     self.LE_SandboxR.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxR.setObjectName("LE_SandboxR_" + str(self.NbOptParam + 1))
     self.gridLayout_5.addWidget(self.LE_SandboxR, self.NbOptParam + 1, 1, 1, 1)
 
-    spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
     self.gridLayout_5.addItem(spacerItem1, self.NbOptParam + 2, 0, 1, 1)
-    spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
     self.gridLayout_5.addItem(spacerItem2, self.NbOptParam + 2, 1, 1, 1)
+    self.gridLayout_5.setRowStretch(self.NbOptParam + 1,0)
+    self.gridLayout_5.setRowStretch(self.NbOptParam + 2,0)
 
     self.sandboxes.append((self.LE_SandboxL, self.LE_SandboxR))
 
@@ -471,11 +465,12 @@ button.
         self.SP_Ridge.setProperty("value", 45.0)
         self.SP_Gradation.setProperty("value", 1.3)
         self.SP_HSize.setProperty("value", 0.1)
-    self.CB_RepairBeforeCompute.setChecked(True)
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)
     self.RB_MMGS.setChecked(True)
+    self.CB_RepairBeforeCompute.setChecked(True)
+    self.CB_RepairOnly.setChecked(False)
 
     from PyQt5 import QtCore, QtGui, QtWidgets
     _translate = QtCore.QCoreApplication.translate
@@ -483,29 +478,35 @@ button.
         widget = self.gridLayout_5.takeAt(i).widget()
         if widget is not None:
             widget.setParent(None)
+
     self.LE_SandboxR_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxR_1.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxR_1.setObjectName("LE_SandboxR_1")
     self.gridLayout_5.addWidget(self.LE_SandboxR_1, 1, 1, 1, 1)
-    self.label_3 = QtWidgets.QLabel(self.scrollAreaWidgetContents)
-    self.label_3.setObjectName("label_3")
-    self.gridLayout_5.addWidget(self.label_3, 0, 1, 1, 1)
+
     self.LE_SandboxL_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
-    sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-    sizePolicy.setHorizontalStretch(0)
-    sizePolicy.setVerticalStretch(0)
-    sizePolicy.setHeightForWidth(self.LE_SandboxL_1.sizePolicy().hasHeightForWidth())
-    self.LE_SandboxL_1.setSizePolicy(sizePolicy)
     self.LE_SandboxL_1.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxL_1.setObjectName("LE_SandboxL_1")
     self.gridLayout_5.addWidget(self.LE_SandboxL_1, 1, 0, 1, 1)
-    spacerItem16 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-    self.gridLayout_5.addItem(spacerItem16, 2, 0, 1, 1)
-    spacerItem17 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
-    self.gridLayout_5.addItem(spacerItem17, 2, 1, 1, 1)
+
+    self.label_3 = QtWidgets.QLabel(self.scrollAreaWidgetContents)
+    self.label_3.setObjectName("label_3")
+    self.gridLayout_5.addWidget(self.label_3, 0, 1, 1, 1)
+
     self.label_2 = QtWidgets.QLabel(self.scrollAreaWidgetContents)
     self.label_2.setObjectName("label_2")
     self.gridLayout_5.addWidget(self.label_2, 0, 0, 1, 1)
+
+    spacerItem16 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    self.gridLayout_5.addItem(spacerItem16, 2, 0, 1, 1)
+
+    spacerItem17 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    self.gridLayout_5.addItem(spacerItem17, 2, 1, 1, 1)
+
+    self.gridLayout_5.setRowStretch(0,0)
+    self.gridLayout_5.setRowStretch(1,0)
+    self.gridLayout_5.setRowStretch(2,0)
+
     self.label_3.setText(_translate("MyPlugDialog", "Value"))
     self.label_2.setText(_translate("MyPlugDialog", "Parameter"))
 

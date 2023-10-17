@@ -99,7 +99,6 @@ class Values():
         if len(self.CoincidentNodes) != 0:
             self.CpyMesh.MergeNodes(self.CoincidentNodes, AvoidMakingHoles=True)
 
-        #TODO Remove the double faces by increasing treshold and merging elements
         tolerance = self.min_length/10
         while len(self.DoubleFaces) != 0:
             self.CoincidentNodes = self.CpyMesh.FindCoincidentNodesOnPart([self.CpyMesh], tolerance, [], 0)

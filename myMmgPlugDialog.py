@@ -181,6 +181,7 @@ button.
     self.fichierIn = CpyFichierIn
     self.MeshIn = CpyMeshIn
     self.__selectedMesh = CpySelectedMesh
+    self.values.CpyMesh = None
 
   def enregistreResultat(self):
     import salome

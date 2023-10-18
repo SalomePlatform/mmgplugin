@@ -5,6 +5,7 @@ import time
 import shutil
 from collections import defaultdict
 import numpy as np
+from math import sqrt
 from plotter import *
 from my_gnuplot import * 
 from analysis import Analysis
@@ -15,7 +16,7 @@ logger = Logger()
 logger.set_level("info")
 
 results_dict = defaultdict(list)
-bounding_box_needed = False
+bounding_box_needed = True
 logger.info("bounding box calculation : " + str(bounding_box_needed))
 
 def perform_analysis(path):
@@ -343,6 +344,57 @@ def perform_hsiz_hausd_gnu_plot():
         # plots
         my_gnu_plot('analysis.gp', 'analysis.dat', hausd_values, hsiz_values, quality_measures, 'hausd', 'hsiz', 'quality', file_name.split('.')[0] + "_hausd_hsiz")
 
+def perform_hsiz_box_variations():
+    """observations are done by changing hausd and the bounding box size"""
+    def vol(box):
+        return box[0]*box[1]*box[2]
+    def norm(box):
+        return sqrt(box[0]**2 + box[1]**2 + box[2]**2)
+
+    hsiz_values = np.linspace(1, 10, 30)
+
+    for file_path in perform_mesh_ls():
+        file_name = file_path.split('/')[-1]
+        output_file_name = os.path.join(OUTPUT_PATH, file_name[:-4] + "o.mesh")
+        liste = results_dict[file_name]
+
+        for j, _ in enumerate(hsiz_values):
+            perform_remeshing(file_path, hausd=None, hgrad=None, hmin=None, hmax=None, hsiz=hsiz_values[j])
+            value = perform_analysis(output_file_name)
+            results_dict[file_name].append(value)
+
+            empty_dir()
+
+    #sort the dictionnary entries by volume, size_min, size_max
+    analyses_sorted_by_vol = dict(sorted(results_dict.items(), key=lambda x: vol(x[1][0].box)))
+    analyses_sorted_by_norm = dict(sorted(results_dict.items(), key=lambda x: norm(x[1][0].box)))
+
+    #store their dimensions
+    boxes_sorted_by_vol = np.array([vol(elt[0].box) for name , elt in analyses_sorted_by_vol.items()])
+    boxes_sorted_by_norm = np.array([norm(elt[0].box) for name , elt in analyses_sorted_by_norm.items()])
+
+    Xvol, Yvol = np.meshgrid(boxes_sorted_by_vol, hsiz_values)
+    Xnorm, Ynorm = np.meshgrid(boxes_sorted_by_norm, hsiz_values)
+
+    vol_quality_measures = np.full_like(Xvol, -1)
+    norm_quality_measures = np.full_like(Xnorm, -1)
+
+    i = 0
+    for file_name, liste in analyses_sorted_by_vol.items():
+        for j, _ in enumerate(hsiz_values):
+            vol_quality_measures[j][i] = liste[-j].quality
+        i += 1
+
+    i = 0
+    for file_name, liste in analyses_sorted_by_norm.items():
+        for j, _ in enumerate(hsiz_values):
+            norm_quality_measures[j][i] = liste[-j].quality
+        i += 1
+
+    # plots
+    my_gnu_plot('analysis.gp', 'analysis.dat', boxes_sorted_by_vol, hsiz_values, vol_quality_measures, 'volume', 'hsiz', 'quality', "volume_hsiz_quality")
+    my_gnu_plot('analysis.gp', 'analysis.dat', boxes_sorted_by_norm, hsiz_values, norm_quality_measures, 'norm', 'hsiz', 'quality', "norm_hsiz_quality")
+
 def main():
     """main"""
 
@@ -358,8 +410,10 @@ def main():
     # analyses
     #perform_3D_graph()
     #perform_hausd_variations()
-
     """
+    set_output_plot_path('hsiz_box')
+    perform_hsiz_box_variations()
+
     set_output_plot_path('hausd_hsiz')
     perform_hsiz_hausd_gnu_plot()
 

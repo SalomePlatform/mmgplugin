@@ -294,7 +294,8 @@ button.
     text+="InsertEdge="+str(self.CB_InsertEdge.isChecked())+separator
     text+="GeometricalApproximation="+str(self.SP_Geomapp.value())+separator
     text+="RidgeAngle="+str(self.SP_Ridge.value())+separator
-    text+="HSize="+str(self.SP_HSize.value())+separator
+    text+="Hmin="+str(self.SP_Hmin.value())+separator
+    text+="Hmax="+str(self.SP_Hmax.value())+separator
     text+="MeshGradation="+str(self.SP_Gradation.value())+separator
     return str(text)
 
@@ -314,7 +315,8 @@ button.
         if tit=="MoveEdge": self.CB_MoveEdge.setChecked(value=="True")
         if tit=="GeometricalApproximation": self.SP_Geomapp.setProperty("value", float(value))
         if tit=="RidgeAngle": self.SP_Ridge.setProperty("value", float(value))
-        if tit=="HSize": self.SP_HSize.setProperty("value", float(value))
+        if tit=="Hmin": self.SP_Hmin.setProperty("value", float(value))
+        if tit=="Hmax": self.SP_Hmax.setProperty("value", float(value))
         if tit=="MeshGradation": self.SP_Gradation.setProperty("value", float(value))
       except:
         QMessageBox.warning(self, "load MMG Hypothesis", "Problem on '"+lig+"'")
@@ -342,7 +344,7 @@ button.
       infile = fd.selectedFiles()[0]
       self.LE_MeshFile.setText(infile)
       self.fichierIn=str(infile)
-      #self.values = Values(self.fichierIn, 0)
+      self.values = Values(self.fichierIn, 0)
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
@@ -404,7 +406,7 @@ button.
     myName = mySObject.GetName()
 
     self.values = None
-    #self.values = Values(myName, 0)
+    self.values = Values(myName, 0)
     #print "MeshSmeshNameChanged", myName
     self.MeshIn=myName
     self.LE_MeshSmesh.setText(myName)
@@ -445,7 +447,8 @@ button.
     if not self.CB_MoveEdge.isChecked()  : self.commande+=" -nomove"
     if self.SP_Geomapp.value() != 0.01 : self.commande+=" -hausd %f"%self.SP_Geomapp.value()
     if self.SP_Ridge.value() != 45.0  : self.commande+=" -ar %f"%self.SP_Ridge.value()
-    self.commande+=" -hsiz %f"   %self.SP_HSize.value()
+    self.commande+=" -hmin %f"   %self.SP_Hmin.value()
+    self.commande+=" -hmax %f"   %self.SP_Hmax.value()
     if self.SP_Gradation.value() != 1.3   : self.commande+=" -hgrad %f"  %self.SP_Gradation.value()
 
     self.commande+=' -in "'  + self.fichierIn +'"'
@@ -456,15 +459,18 @@ button.
 
   def clean(self):
     if self.values is not None:
+        self.values.ComputeNewDefaultValues()
         self.SP_Geomapp.setProperty("value", self.values.geomapp)
         self.SP_Ridge.setProperty("value", self.values.ridge)
         self.SP_Gradation.setProperty("value", self.values.hgrad)
-        self.SP_HSize.setProperty("value", self.values.hsize)
+        self.SP_Hmin.setProperty("value", self.values.hmin)
+        self.SP_Hmax.setProperty("value", self.values.hmax)
     else: # No file provided, default from MMG
         self.SP_Geomapp.setProperty("value", 0.01)
         self.SP_Ridge.setProperty("value", 45.0)
         self.SP_Gradation.setProperty("value", 1.3)
-        self.SP_HSize.setProperty("value", 0.1)
+        self.SP_Hmin.setProperty("value", 0.01)
+        self.SP_Hmax.setProperty("value", 10)
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)

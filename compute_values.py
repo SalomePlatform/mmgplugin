@@ -1,6 +1,7 @@
 import SMESH
 import salome
 import os
+import sys
 from salome.smesh import smeshBuilder
 from math import *
 
@@ -8,7 +9,8 @@ class Values():
     def __init__(self, MeshName, num):
         self.geomapp = 0.01
         self.ridge = 45
-        self.hsize = 0.1
+        self.hmin = 0.01
+        self.hmax = 10
         self.hgrad = 1.3
         self.MeshName = MeshName
         self.CpyName = os.path.basename(os.path.splitext(MeshName)[0]) + '_Repaired_' + str(num)
@@ -16,13 +18,19 @@ class Values():
         study = salome.myStudy
         self.smesh_builder = smeshBuilder.New()
         self.smesh_builder.UpdateStudy()
+        self.CpyMesh = None
+        sys.stderr.write(MeshName + "  " + self.CpyName + "\n")
         if (len(study.FindObjectByName(self.MeshName, 'SMESH')) > 0):
             self.SelectedObject = study.FindObjectByName(self.MeshName, 'SMESH')[-1]
-            self.CpyMesh = None
         else:
             self.SelectedObject = None
-            self.CpyMesh = self.smesh_builder.CreateMeshesFromGMF(MeshName)[0] #TODO error handling (self.MyMesh[1].code, self.MyMesh[1].hasBadMesh)
+            FullMesh = self.smesh_builder.CreateMeshesFromGMF(self.MeshName) #TODO error handling (self.MyMesh[1].code, self.MyMesh[1].hasBadMesh)
+            self.CpyMesh = FullMesh[0]
             self.CpyMesh.SetName(self.CpyName)
+        if (self.CpyMesh is None) and (self.SelectedObject is not None):
+            self.CpyMesh = self.smesh_builder.CopyMesh(self.SelectedObject.GetObject(), self.CpyName, True, True)
+        self.bb = self.CpyMesh.GetBoundingBox()
+        self.diag = sqrt((self.bb.maxX - self.bb.minX)**2 + (self.bb.maxY - self.bb.minY)**2 + (self.bb.maxZ - self.bb.minZ)**2)
 
         self.min_length = 0
         self.AvgAspects = 0
@@ -53,9 +61,7 @@ class Values():
         self.FreeEdges = self.GetInfoFromFilter(SMESH.FACE, SMESH.FT_FreeEdges)
 
         # Get minimal length (approx)
-        bb = self.CpyMesh.GetBoundingBox()
-        norm = sqrt((bb.maxX - bb.minX)**2 + (bb.maxY - bb.minY)**2 + (bb.maxZ - bb.minZ)**2)
-        start_treshold = norm / 100
+        start_treshold = self.diag / 100
         treshold = start_treshold
         step = start_treshold
         self.min_length = treshold
@@ -81,11 +87,11 @@ class Values():
         self.DoubleFaces = self.GetInfoFromFilter(SMESH.FACE, SMESH.FT_EqualFaces)
 
     def ComputeNewDefaultValues(self):
-        pass
+        self.hmin = (self.diag * 0.01) / 17.25 # Reproduce default MMG values
+        self.hmax = (self.diag * 2) / 1.723  # Reproduce default MMG values
+
 
     def AnalysisAndRepair(self):
-        if (self.CpyMesh is None) and (self.SelectedObject is not None):
-            self.CpyMesh = self.smesh_builder.CopyMesh(self.SelectedObject.GetObject(), self.CpyName, True, True)
         self.FillInfos()
 
         if len(self.FreeEdges) != 0:

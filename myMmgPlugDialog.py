@@ -24,6 +24,7 @@
 import os, subprocess
 import tempfile
 import re
+import sys
 from mmgplugin.MyPlugDialog_ui import Ui_MyPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
@@ -68,6 +69,13 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.LE_SandboxL_1.setText("")
     self.LE_SandboxR_1.setText("")
 
+    self.SP_Hmax.setMaximum(sys.float_info.max)
+    self.SP_Geomapp.setMaximum(sys.float_info.max)
+    self.SP_Gradation.setMaximum(sys.float_info.max)
+    self.SP_Ridge.setMaximum(180)
+    self.updateHmaxValue()
+    self.updateHminValue()
+
     self.sandboxes = [(self.LE_SandboxL_1, self.LE_SandboxR_1)]
 
     self.resize(800, 600)
@@ -83,6 +91,14 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
     self.PB_Plus.clicked.connect(self.PBPlusPressed)
+    self.SP_Hmin.valueChanged.connect(self.updateHmaxValue)
+    self.SP_Hmax.valueChanged.connect(self.updateHminValue)
+
+  def updateHmaxValue(self):
+      self.SP_Hmax.setMinimum(self.SP_Hmin.value())
+
+  def updateHminValue(self):
+      self.SP_Hmin.setMaximum(self.SP_Hmax.value())
 
   def PBPlusPressed(self):
     for elt in self.sandboxes:

@@ -90,6 +90,9 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.PB_Help.clicked.connect(self.PBHelpPressed)
     self.PB_OK.clicked.connect(self.PBOKPressed)
     
+    self.LE_MeshFile.returnPressed.connect(self.meshFileNameChanged)
+    self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
+    self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
     self.PB_Plus.clicked.connect(self.PBPlusPressed)
@@ -376,42 +379,6 @@ button.
     text+="MeshGradation="+str(self.SP_Gradation.value())+separator
     return str(text)
 
-  def loadResumeData(self, hypothesis, separator="\n"):
-    text=str(hypothesis)
-    self.clean()
-    for slig in reversed(text.split(separator)):
-      lig=slig.strip()
-      #print "load ResumeData",lig
-      if lig=="": continue #skip blank lines
-      if lig[0]=="#": break
-      try:
-        tit,value=lig.split("=")
-        if tit=="RepairBeforeCompute": self.CB_RepairBeforeCompute.setChecked(value=="True")
-        if tit=="SwapEdge": self.CB_SwapEdge.setChecked(value=="True")
-        if tit=="InsertEdge": self.CB_InsertEdge.setChecked(value=="True")
-        if tit=="MoveEdge": self.CB_MoveEdge.setChecked(value=="True")
-        if tit=="GeometricalApproximation": self.SP_Geomapp.setProperty("value", float(value))
-        if tit=="RidgeAngle": self.SP_Ridge.setProperty("value", float(value))
-        if tit=="Hmin": self.SP_Hmin.setProperty("value", float(value))
-        if tit=="Hmax": self.SP_Hmax.setProperty("value", float(value))
-        if tit=="MeshGradation": self.SP_Gradation.setProperty("value", float(value))
-      except:
-        QMessageBox.warning(self, "load MMG Hypothesis", "Problem on '"+lig+"'")
-
-    """load last hypothesis saved in tail of file"""
-    try:
-      f=open(self.paramsFile,"r")
-    except:
-      QMessageBox.warning(self, "File", "Unable to open "+self.paramsFile)
-      return
-    try:
-      text=f.read()
-    except:
-      QMessageBox.warning(self, "File", "Unable to read "+self.paramsFile)
-      return
-    f.close()
-    self.loadResumeData(text, separator="\n")
-
   def PBCancelPressed(self):
     self.close()
 
@@ -423,39 +390,12 @@ button.
       self.fichierIn=str(infile)
       if self.values is not None:
         self.values.DeleteMesh()
+      self.values = None
       self.values = Values(self.fichierIn, 0)
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
       self.isFile = True
-
-  def setParamsFileName(self):
-    fd = QFileDialog(self, "select a file", self.LE_ParamsFile.text(), "dat Files (*.dat);;All Files (*)")
-    if fd.exec_():
-      infile = fd.selectedFiles()[0]
-      self.LE_ParamsFile.setText(infile)
-      self.paramsFile=str(infile)
-
-  def meshFileNameChanged(self):
-    self.fichierIn=str(self.LE_MeshFile.text())
-    #print "meshFileNameChanged", self.fichierIn
-    if os.path.exists(self.fichierIn): 
-      self.__selectedMesh=None
-      self.MeshIn=""
-      self.LE_MeshSmesh.setText("")
-      return
-    QMessageBox.warning(self, "Mesh file", "File doesn't exist")
-
-  def meshSmeshNameChanged(self):
-    """only change by GUI mouse selection, otherwise clear"""
-    self.__selectedMesh = None
-    self.MeshIn=""
-    self.LE_MeshSmesh.setText("")
-    self.fichierIn=""
-    return
-
-  def paramsFileNameChanged(self):
-    self.paramsFile=self.LE_ParamsFile.text()
 
   def PBMeshSmeshPressed(self):
     from omniORB import CORBA
@@ -495,6 +435,24 @@ button.
     self.LE_MeshFile.setText("")
     self.fichierIn=""
     self.isFile = False
+
+  def meshFileNameChanged(self):
+    self.fichierIn=str(self.LE_MeshFile.text())
+    #print "meshFileNameChanged", self.fichierIn
+    if os.path.exists(self.fichierIn): 
+      self.__selectedMesh=None
+      self.MeshIn=""
+      self.LE_MeshSmesh.setText("")
+      return
+    QMessageBox.warning(self, "Mesh file", "File doesn't exist")
+
+  def meshSmeshNameChanged(self):
+    """only change by GUI mouse selection, otherwise clear"""
+    self.__selectedMesh = None
+    self.MeshIn=""
+    self.LE_MeshSmesh.setText("")
+    self.fichierIn=""
+    return
 
   def prepareFichier(self):
     self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")

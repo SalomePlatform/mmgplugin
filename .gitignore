@@ -2,3 +2,6 @@
 __pycache__
 *.gp
 *.dat
+*.swp
+misc/mesh_data/study_meshes/
+*.autosave

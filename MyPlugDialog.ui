@@ -49,7 +49,7 @@
       <bool>false</bool>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -599,18 +599,31 @@ The maximal edge size is set to two times the bounding box size.</string>
             </property>
            </widget>
           </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Remesher</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="2">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
+           <widget class="QComboBox" name="COB_Remesher">
+            <item>
+             <property name="text">
+              <string>MMGS</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>MMG2D</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>MMG3D</string>
+             </property>
+            </item>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -627,11 +640,120 @@ The maximal edge size is set to two times the bounding box size.</string>
       <attribute name="title">
        <string>Advanced Remeshing Options</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout" rowstretch="1,3,10" columnstretch="0">
+      <layout class="QGridLayout" name="gridLayout" rowstretch="1,3" columnstretch="0">
        <property name="sizeConstraint">
         <enum>QLayout::SetNoConstraint</enum>
        </property>
-       <item row="2" column="0">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>If set, this will compute for you the intermediate repair mesh when in auto repair mode.</string>
+         </property>
+         <property name="title">
+          <string>You can set/unset</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4" columnstretch="10,0">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetNoConstraint</enum>
+          </property>
+          <item row="3" column="1">
+           <spacer name="horizontalSpacer_14">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="1">
+           <spacer name="horizontalSpacer_15">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="0">
+           <widget class="QCheckBox" name="CB_GenRepair">
+            <property name="text">
+             <string>Generate the repaired mesh</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="CB_RepairBeforeCompute">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <kerning>true</kerning>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If not set, your mesh won't be repaired before being remeshed by MMG.&lt;/p&gt;&lt;p&gt;Note that your mesh might not be valid for MMG.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>auto repair before computing</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="CB_RepairOnly">
+            <property name="toolTip">
+             <string>If set, MMG will not be called and only the repair process will be launched</string>
+            </property>
+            <property name="text">
+             <string>Only repair</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="4" column="0">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="enabled">
           <bool>true</bool>
@@ -717,7 +839,7 @@ The maximal edge size is set to two times the bounding box size.</string>
                <x>0</x>
                <y>0</y>
                <width>639</width>
-               <height>209</height>
+               <height>308</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_6">
@@ -794,167 +916,6 @@ The maximal edge size is set to two times the bounding box size.</string>
              </layout>
             </widget>
            </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>1</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>You can set/unset</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4" columnstretch="10,0">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetNoConstraint</enum>
-          </property>
-          <item row="0" column="1">
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="0">
-           <spacer name="verticalSpacer_6">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="CB_RepairBeforeCompute">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-              <kerning>true</kerning>
-             </font>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If not set, your mesh won't be repaired before being remeshed by MMG.&lt;/p&gt;&lt;p&gt;Note that your mesh might not be valid for MMG.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>auto repair before computing</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="CB_RepairOnly">
-            <property name="toolTip">
-             <string>If set, MMG will not be called and only the repair process will be launched</string>
-            </property>
-            <property name="text">
-             <string>Only repair</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <spacer name="horizontalSpacer_15">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="toolTip">
-          <string>According to the type of mesh that you are working with, you can change the binary to use</string>
-         </property>
-         <property name="title">
-          <string>Binary</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="RB_MMG2D">
-            <property name="text">
-             <string>mmg2D_O3</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QRadioButton" name="RB_MMG3D">
-            <property name="text">
-             <string>mmg3D_O3</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QRadioButton" name="RB_MMGS">
-            <property name="text">
-             <string>mmgs_O3</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <spacer name="horizontalSpacer_14">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="1">
-           <spacer name="horizontalSpacer_16">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="2" column="1">
-           <spacer name="horizontalSpacer_17">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
           </item>
          </layout>
         </widget>

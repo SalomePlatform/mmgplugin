@@ -29,6 +29,7 @@ class Values():
             self.CpyMesh.SetName(self.CpyName)
         if (self.CpyMesh is None) and (self.SelectedObject is not None):
             self.CpyMesh = self.smesh_builder.CopyMesh(self.SelectedObject.GetObject(), self.CpyName, True, True)
+
         self.bb = self.CpyMesh.GetBoundingBox()
         self.diag = sqrt((self.bb.maxX - self.bb.minX)**2 + (self.bb.maxY - self.bb.minY)**2 + (self.bb.maxZ - self.bb.minZ)**2)
 
@@ -91,7 +92,7 @@ class Values():
         self.hmax = (self.diag * 2) / 1.723  # Reproduce default MMG values
 
 
-    def AnalysisAndRepair(self):
+    def AnalysisAndRepair(self, GenRepair):
         self.FillInfos()
 
         if len(self.FreeEdges) != 0:
@@ -119,11 +120,13 @@ class Values():
         self.FillInfos()
         self.CpyMesh.Compute()
         self.smesh_builder.UpdateStudy()
-        if salome.sg.hasDesktop() and not self.CpyName.endswith('_0'):
-            salome.sg.updateObjBrowser()
+        if salome.sg.hasDesktop() and GenRepair and not self.CpyName.endswith('_0'):
+          sys.stderr.write("update browser\n")
+          salome.sg.updateObjBrowser()
 
     def DeleteMesh(self):
         if self.CpyMesh is not None:
             self.smesh_builder.RemoveMesh(self.CpyMesh)
-        if salome.sg.hasDesktop(): salome.sg.updateObjBrowser()
+            self.CpyMesh = None
+            if salome.sg.hasDesktop(): salome.sg.updateObjBrowser()
 

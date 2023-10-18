@@ -32,6 +32,7 @@ from mmgplugin.compute_values import *
 
 verbose = True
 
+REMESHER_DICT = { 'MMGS' : 0, 'MMG2D' : 1, 'MMG3D' : 2 }
 
 class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
   """
@@ -47,6 +48,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.num=1
     self.__selectedMesh=None
     self.values = None
+    self.isFile = False
 
     # complex with QResources: not used
     # The icon are supposed to be located in the $SMESH_ROOT_DIR/share/salome/resources/smesh folder,
@@ -91,8 +93,55 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
     self.PB_Plus.clicked.connect(self.PBPlusPressed)
+
     self.SP_Hmin.valueChanged.connect(self.updateHmaxValue)
     self.SP_Hmax.valueChanged.connect(self.updateHminValue)
+
+    self.CB_RepairBeforeCompute.stateChanged.connect(self.RepairBeforeComputeStateChanged)
+    self.CB_RepairOnly.stateChanged.connect(self.RepairOnlyStateChanged)
+    self.CB_GenRepair.stateChanged.connect(self.GenRepairStateChanged)
+
+  def RepairBeforeComputeStateChanged(self, state):
+      if state == 2: # Checked
+          self.CB_RepairOnly.setChecked(False)
+          self.CB_RepairOnly.setDisabled(True)
+
+          self.CB_GenRepair.setDisabled(False)
+          #self.CB_GenRepair.setChecked(False)
+      else:
+          #self.CB_RepairOnly.setChecked(False)
+          self.CB_RepairOnly.setDisabled(False)
+
+          self.CB_GenRepair.setChecked(False)
+          self.CB_GenRepair.setDisabled(True)
+
+  def RepairOnlyStateChanged(self, state):
+      if state == 2: # Checked
+          self.CB_RepairBeforeCompute.setChecked(False)
+          self.CB_RepairBeforeCompute.setDisabled(True)
+
+          self.CB_GenRepair.setChecked(False)
+          self.CB_GenRepair.setDisabled(True)
+      else:
+          self.CB_RepairBeforeCompute.setChecked(True)
+          self.CB_RepairBeforeCompute.setDisabled(False)
+
+          self.CB_GenRepair.setChecked(False)
+          self.CB_GenRepair.setDisabled(False)
+
+  def GenRepairStateChanged(self, state):
+      if state == 2: # Checked
+          self.CB_RepairBeforeCompute.setChecked(True)
+          self.CB_RepairBeforeCompute.setDisabled(True)
+
+          self.CB_RepairOnly.setChecked(False)
+          self.CB_RepairOnly.setDisabled(True)
+      else:
+          self.CB_RepairBeforeCompute.setChecked(True)
+          self.CB_RepairBeforeCompute.setDisabled(False)
+
+          self.CB_RepairOnly.setChecked(False)
+          self.CB_RepairOnly.setDisabled(False)
 
   def updateHmaxValue(self):
       self.SP_Hmax.setMinimum(self.SP_Hmin.value())
@@ -155,38 +204,50 @@ button.
       QMessageBox.critical(self, "Mesh", "internal error, check the logs")
       return False
     if self.values.CpyName.endswith('_0'):
-        self.values.DeleteMesh()
+      self.values.DeleteMesh()
+
     self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.num)
-    if self.values.CpyMesh is not None:
-        self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromGMF(self.values.MeshName)[0]
-        self.values.CpyMesh.SetName(self.values.CpyName)
+
+    if self.isFile:
+      self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromGMF(self.values.MeshName)[0]
+      self.values.CpyMesh.SetName(self.values.CpyName)
+    else:
+      self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
+      
     self.num+=1
-    self.values.AnalysisAndRepair()
+    self.values.AnalysisAndRepair(self.CB_GenRepair.isChecked() or self.CB_RepairOnly.isChecked())
 
   def PBOKPressed(self):
     if self.fichierIn=="" and self.MeshIn=="":
       QMessageBox.critical(self, "Mesh", "select an input mesh")
       return False
+    if not self.CB_RepairBeforeCompute.isChecked() and not self.CB_RepairOnly.isChecked():
+      QMessageBox.warning(self, "Compute", "No actions triggered. Please set one in Advanced Remeshing Options.")
+      return False
+
     CpyFichierIn = self.fichierIn
     CpyMeshIn = self.MeshIn
     CpySelectedMesh = self.__selectedMesh
-    if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.RB_MMGS.isChecked():
-        if self.values is None:
-            if self.fichierIn != "":
-                self.values = Values(self.fichierIn, 0)
-            else:
-                self.values = Values(self.MeshIn, 0)
-        self.Repair()
-        self.MeshIn = self.values.CpyName
-        self.fichierIn=""
-        self.__selectedMesh = self.values.CpyMesh
+    if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
+      if self.values is None:
+        if self.fichierIn != "":
+          self.values = Values(self.fichierIn, 0)
+        else:
+          self.values = Values(self.MeshIn, 0)
+      self.Repair()
+      self.MeshIn = self.values.CpyName
+      self.fichierIn=""
+      self.__selectedMesh = self.values.CpyMesh
     if not self.CB_RepairOnly.isChecked():
-        if not(self.PrepareLigneCommande()):
-          #warning done yet
-          #QMessageBox.warning(self, "Compute", "Command not found")
-          return
+      if not(self.PrepareLigneCommande()):
+        #warning done yet
+        #QMessageBox.warning(self, "Compute", "Command not found")
+        return
         
-        maFenetre=MyViewText(self,self.commande)
+      maFenetre=MyViewText(self,self.commande)
+      if not self.CB_GenRepair.isChecked():
+          sys.stderr.write("not checked\n")
+          self.values.DeleteMesh()
 
     self.fichierIn = CpyFichierIn
     self.MeshIn = CpyMeshIn
@@ -360,10 +421,13 @@ button.
       infile = fd.selectedFiles()[0]
       self.LE_MeshFile.setText(infile)
       self.fichierIn=str(infile)
+      if self.values is not None:
+        self.values.DeleteMesh()
       self.values = Values(self.fichierIn, 0)
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
+      self.isFile = True
 
   def setParamsFileName(self):
     fd = QFileDialog(self, "select a file", self.LE_ParamsFile.text(), "dat Files (*.dat);;All Files (*)")
@@ -421,6 +485,8 @@ button.
       return
     myName = mySObject.GetName()
 
+    if self.values is not None:
+        self.values.DeleteMesh()
     self.values = None
     self.values = Values(myName, 0)
     #print "MeshSmeshNameChanged", myName
@@ -428,6 +494,7 @@ button.
     self.LE_MeshSmesh.setText(myName)
     self.LE_MeshFile.setText("")
     self.fichierIn=""
+    self.isFile = False
 
   def prepareFichier(self):
     self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
@@ -448,9 +515,15 @@ button.
       return False
     
     self.commande=""
-    if self.RB_MMG2D.isChecked() : self.commande="mmg2d_O3"
-    if self.RB_MMG3D.isChecked() : self.commande="mmg3d_O3"
-    if self.RB_MMGS.isChecked() : self.commande="mmgs_O3"
+    selected_index = self.COB_Remesher.currentIndex()
+    if selected_index == REMESHER_DICT['MMGS']:
+        self.commande = "mmgs_O3"
+    elif selected_index == REMESHER_DICT['MMG2D']:
+        self.commande = "mmg2d_O3"
+    elif selected_index == REMESHER_DICT['MMG3D']:
+        self.commande = "mmg3d_O3"
+    else:
+        self.commande = "mmgs_O3"
 
     deb=os.path.splitext(self.fichierIn)
     self.fichierOut=deb[0] + "_output.mesh"
@@ -490,9 +563,10 @@ button.
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)
-    self.RB_MMGS.setChecked(True)
     self.CB_RepairBeforeCompute.setChecked(True)
     self.CB_RepairOnly.setChecked(False)
+    self.CB_GenRepair.setChecked(False)
+    self.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMGS'])
 
     from PyQt5 import QtCore, QtGui, QtWidgets
     _translate = QtCore.QCoreApplication.translate

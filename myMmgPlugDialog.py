@@ -41,6 +41,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
   """
   def __init__(self):
     QWidget.__init__(self)
+    self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
     self.setupUi(self)
     self.connecterSignaux()
     self.fichierIn=""
@@ -117,140 +118,66 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.label_info.mouseReleaseEvent = self.GetLabelEvent
 
   def GetLabelEvent(self, event):
-      from PyQt5.QtCore import Qt
       if event.button() == Qt.LeftButton:
           self.showInfo()
 
   def showInfo(self):
+    title = "How to use the sandbox with "
+    message ="""** Generic options
+-h        Print this message
+-v [n]    Tune level of verbosity, [-1..10]
+-m [n]    Set maximal memory size to n Mbytes
+-d        Turn on debug mode
+-val      Print the default parameters values
+-default  Save a local parameters file for default parameters values
+
+**  File specifications
+-sol file  load solution or metric file
+-met file  load metric file
+
+**  Mode specifications (mesh adaptation by default)
+-ls     val create mesh of isovalue val (0 if no argument provided)
+-lssurf val split mesh boundaries on isovalue val (0 if no argument
+                provided)
+
+**  Parameters
+-A           enable anisotropy (without metric file).
+-ar     val  angle detection
+-nr          no angle detection
+-hausd  val  control Hausdorff distance
+-hgrad  val  control gradation
+-hmax   val  maximal mesh size
+-hmin   val  minimal mesh size
+-hsiz   val  constant mesh size
+-rmc   [val] enable the removal of componants whose volume
+                    fraction is less than val (1e-5 if not given)
+                    of the mesh volume (ls mode).
+"""
     if self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
-        QMessageBox.about(None, "How to use the sandbox with MMGS",
-                """
-** Generic options
--h        Print this message
--v [n]    Tune level of verbosity, [-1..10]
--m [n]    Set maximal memory size to n Mbytes
--d        Turn on debug mode
--val      Print the default parameters values
--default  Save a local parameters file for default parameters values
-
-**  File specifications
--sol file  load solution or metric file
--met file  load metric file
-
-**  Mode specifications (mesh adaptation by default)
--ls     val create mesh of isovalue val (0 if no argument provided)
--lssurf val split mesh boundaries on isovalue val (0 if no argument provided)
-
-**  Parameters
--A           enable anisotropy (without metric file).
--ar     val  angle detection
--nr          no angle detection
--hausd  val  control Hausdorff distance
--hgrad  val  control gradation
--hmax   val  maximal mesh size
--hmin   val  minimal mesh size
--hsiz   val  constant mesh size
--rmc   [val] enable the removal of componants whose volume fraction is less than
-             val (1e-5 if not given) of the mesh volume (ls mode).
--keep-ref    preserve initial domain references in level-set mode.
+      title+="MMGS"
+      message +="""-keep-ref    preserve initial domain references in level-set mode.
 -rn [n]      Turn on or off the renumbering using SCOTCH [0/1]
-
--noinsert    no point insertion/deletion
--nomove      no point relocation
--noswap      no edge or face flipping
--nreg        normal regul.
--xreg        vertex regul.
--nsd    val  save the subdomain number val (0==all subdomain)
--optim       mesh optimization
-
-**  Parameters for advanced users
--nosizreq       disable setting of required edge sizes over required vertices.
--hgradreq  val  control gradation from required entities toward others
-                """)
+"""
     elif self.COB_Remesher.currentIndex() == REMESHER_DICT['MMG2D']:
-        QMessageBox.about(None, "How to use the sandbox with MMG2D",
-                """
-** Generic options
--h        Print this message
--v [n]    Tune level of verbosity, [-1..10]
--m [n]    Set maximal memory size to n Mbytes
--d        Turn on debug mode
--val      Print the default parameters values
--default  Save a local parameters file for default parameters values
-
-**  File specifications
--sol file  load solution or metric file
--met file  load metric file
-
-**  Mode specifications (mesh adaptation by default)
--ls     val create mesh of isovalue val (0 if no argument provided)
--lssurf val split mesh boundaries on isovalue val (0 if no argument provided)
-
-**  Parameters
--A           enable anisotropy (without metric file).
--ar     val  angle detection
--nr          no angle detection
--hausd  val  control Hausdorff distance
--hgrad  val  control gradation
--hmax   val  maximal mesh size
--hmin   val  minimal mesh size
--hsiz   val  constant mesh size
--rmc   [val] enable the removal of componants whose volume fraction is less than
-             val (1e-5 if not given) of the mesh volume (ls mode).
--opnbdy      preserve input triangles at the interface of two domains of the same reference.
--3dMedit val read and write for gmsh visu: output only if val=1, input and output if val=2, input if val=3
-
+      title+="MMG2D"
+      message+="""-opnbdy      preserve input triangles at the interface of two domains
+                    of the same reference.
+-3dMedit val read and write for gmsh visu: output only if val=1,
+                    input and output if val=2, input if val=3
 -nofem       do not force Mmg to create a finite element mesh 
 -nosurf      no surface modifications
--noinsert    no point insertion/deletion 
--nomove      no point relocation
--noswap      no edge or face flipping
--nreg        normal regul.
--xreg        vertex regul.
--nsd    val  save the subdomain number val (0==all subdomain)
--optim       mesh optimization
-
-**  Parameters for advanced users
--nosizreq       disable setting of required edge sizes over required vertices.
--hgradreq  val  control gradation from required entities toward others
-                """)
+"""
     else:
-        QMessageBox.about(None, "How to use the sandbox with MMG3D",
-                """
-** Generic options
--h        Print this message
--v [n]    Tune level of verbosity, [-1..10]
--m [n]    Set maximal memory size to n Mbytes
--d        Turn on debug mode
--val      Print the default parameters values
--default  Save a local parameters file for default parameters values
-
-**  File specifications
--sol file  load solution or metric file
--met file  load metric file
-
-**  Mode specifications (mesh adaptation by default)
--ls     val create mesh of isovalue val (0 if no argument provided)
--lssurf val split mesh boundaries on isovalue val (0 if no argument provided)
-
-**  Parameters
--A           enable anisotropy (without metric file).
--ar     val  angle detection
--nr          no angle detection
--hausd  val  control Hausdorff distance
--hgrad  val  control gradation
--hmax   val  maximal mesh size
--hmin   val  minimal mesh size
--hsiz   val  constant mesh size
--rmc   [val] enable the removal of componants whose volume fraction is less than
-             val (1e-5 if not given) of the mesh volume (ls mode).
--opnbdy      preserve input triangles at the interface of two domains of the same reference.
+      title+="MMG3D"
+      message+="""-opnbdy      preserve input triangles at the interface of two domains
+                    of the same reference.
 -octree val  specify the max number of points per octree cell 
 -rn [n]      turn on or off the renumbering using SCOTCH [1/0] 
-
 -nofem       do not force Mmg to create a finite element mesh 
 -nosurf      no surface modifications
+"""
 
+    message+="""
 -noinsert    no point insertion/deletion 
 -nomove      no point relocation
 -noswap      no edge or face flipping
@@ -258,12 +185,20 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
 -xreg        vertex regul.
 -nsd    val  save the subdomain number val (0==all subdomain)
 -optim       mesh optimization
+"""
+    if self.COB_Remesher.currentIndex() == REMESHER_DICT['MMG3D']:
+      message+="""
 -optimLES    enable skewness improvement (for LES computations)
-
+"""
+    
+    message+="""
 **  Parameters for advanced users
--nosizreq       disable setting of required edge sizes over required vertices.
--hgradreq  val  control gradation from required entities toward others
-                """)
+-nosizreq       disable setting of required edge sizes over required
+                        vertices.
+-hgradreq  val  control gradation from required entities toward
+                        others"""
+    
+    QMessageBox.about(None, title, message)
 
 
   def DisplayRemesherLabel(self):

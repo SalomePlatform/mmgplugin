@@ -19,7 +19,6 @@ class Values():
         self.smesh_builder = smeshBuilder.New()
         self.smesh_builder.UpdateStudy()
         self.CpyMesh = None
-        sys.stderr.write(MeshName + "  " + self.CpyName + "\n")
         if (len(study.FindObjectByName(self.MeshName, 'SMESH')) > 0):
             self.SelectedObject = study.FindObjectByName(self.MeshName, 'SMESH')[-1]
         else:
@@ -118,10 +117,10 @@ class Values():
             tolerance += self.min_length/100
 
         self.FillInfos()
-        self.CpyMesh.Compute()
-        self.smesh_builder.UpdateStudy()
+        if GenRepair:
+            self.CpyMesh.Compute()
+            self.smesh_builder.UpdateStudy()
         if salome.sg.hasDesktop() and GenRepair and not self.CpyName.endswith('_0'):
-          sys.stderr.write("update browser\n")
           salome.sg.updateObjBrowser()
 
     def DeleteMesh(self):

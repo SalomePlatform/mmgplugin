@@ -46,6 +46,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.MeshIn=""
     self.commande=""
     self.num=1
+    self.numRepair=1
     self.__selectedMesh=None
     self.values = None
     self.isFile = False
@@ -209,7 +210,7 @@ button.
     if self.values.CpyName.endswith('_0'):
       self.values.DeleteMesh()
 
-    self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.num)
+    self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.numRepair)
 
     if self.isFile:
       self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromGMF(self.values.MeshName)[0]
@@ -217,7 +218,7 @@ button.
     else:
       self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
       
-    self.num+=1
+    self.numRepair+=1
     self.values.AnalysisAndRepair(self.CB_GenRepair.isChecked() or self.CB_RepairOnly.isChecked())
 
   def PBOKPressed(self):
@@ -238,6 +239,8 @@ button.
         else:
           self.values = Values(self.MeshIn, 0)
       self.Repair()
+      if not self.CB_GenRepair.isChecked() and not self.CB_RepairOnly.isChecked():
+          self.numRepair-=1
       self.MeshIn = self.values.CpyName
       self.fichierIn=""
       self.__selectedMesh = self.values.CpyMesh
@@ -249,7 +252,6 @@ button.
         
       maFenetre=MyViewText(self,self.commande)
       if not self.CB_GenRepair.isChecked():
-          sys.stderr.write("not checked\n")
           self.values.DeleteMesh()
 
     self.fichierIn = CpyFichierIn
@@ -501,7 +503,7 @@ button.
     self.commande+=' -in "'  + self.fichierIn +'"'
     self.commande+=' -out "' + self.fichierOut +'"'
 
-    if verbose: print("INFO: MMG command:\n  %s" % self.commande)
+    if verbose: print("INFO: MMG command:\n  %s\n*WARNING* Copy-paste the command line in your study if you want to dump it." % self.commande)
     return True
 
   def clean(self):

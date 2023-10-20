@@ -23,7 +23,7 @@ class Values():
             self.SelectedObject = study.FindObjectByName(self.MeshName, 'SMESH')[-1]
         else:
             self.SelectedObject = None
-            FullMesh = self.smesh_builder.CreateMeshesFromGMF(self.MeshName) #TODO error handling (self.MyMesh[1].code, self.MyMesh[1].hasBadMesh)
+            FullMesh = self.smesh_builder.CreateMeshesFromMED(self.MeshName)[0] #TODO error handling (self.MyMesh[1].code, self.MyMesh[1].hasBadMesh)
             self.CpyMesh = FullMesh[0]
             self.CpyMesh.SetName(self.CpyName)
         if (self.CpyMesh is None) and (self.SelectedObject is not None):

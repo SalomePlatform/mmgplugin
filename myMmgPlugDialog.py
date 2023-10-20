@@ -25,6 +25,8 @@ import os, subprocess
 import tempfile
 import re
 import sys
+import meshio
+import warnings
 from mmgplugin.MyPlugDialog_ui import Ui_MyPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
@@ -53,6 +55,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.__selectedMesh=None
     self.values = None
     self.isFile = False
+    self.currentName = ""
 
     # complex with QResources: not used
     # The icon are supposed to be located in the $SMESH_ROOT_DIR/share/salome/resources/smesh folder,
@@ -116,6 +119,34 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.COB_Remesher.currentIndexChanged.connect(self.DisplayRemesherLabel)
 
     self.label_info.mouseReleaseEvent = self.GetLabelEvent
+
+  def GenMedFromAny(self, fileIn):
+    from salome.smesh import smeshBuilder
+    smesh = smeshBuilder.New()
+    self.fichierIn=tempfile.mktemp(suffix=".med",prefix="ForMMG_")
+    if os.path.exists(self.fichierIn):
+        os.remove(self.fichierIn)
+
+    """
+    TmpMesh = smesh.CreateMeshesFromGMF(fileIn)[0] #FIXME Depends on the format
+    TmpMesh.ExportMED(self.fichierIn)
+    smesh.RemoveMesh(TmpMesh)
+    """
+    TmpMesh = meshio.read(fileIn)
+    TmpMesh.write(self.fichierIn, 'med')
+
+  def GenMeshFromMed(self):
+    self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
+    if os.path.exists(self.fichierIn):
+        os.remove(self.fichierIn)
+
+    if self.__selectedMesh is not None:
+        if str(type(self.__selectedMesh)) == "<class 'salome.smesh.smeshBuilder.Mesh'>":
+            self.__selectedMesh.ExportGMF(self.fichierIn)
+        else:
+            self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
+    else:
+        QMessageBox.critical(self, "Mesh", "internal error")
 
   def GetLabelEvent(self, event):
       if event.button() == Qt.LeftButton:
@@ -319,7 +350,7 @@ button.
     self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.numRepair)
 
     if self.isFile:
-      self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromGMF(self.values.MeshName)[0]
+      self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromMED(self.values.MeshName)[0][0]
       self.values.CpyMesh.SetName(self.values.CpyName)
     else:
       self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
@@ -377,7 +408,10 @@ button.
 
     maStudy=salome.myStudy
     smesh.UpdateStudy()
-    (outputMesh, status) = smesh.CreateMeshesFromGMF(self.fichierOut)
+    self.GenMedFromAny(self.fichierOut)
+    sys.stderr.write(self.fichierIn + '   ' + self.fichierOut + '\n')
+    (outputMesh, status) = smesh.CreateMeshesFromMED(self.fichierIn)
+    outputMesh=outputMesh[0]
     name=str(self.LE_MeshSmesh.text())
     initialMeshFile=None
     initialMeshObject=None
@@ -392,7 +426,7 @@ button.
     else:
       initialMeshObject=maStudy.FindObjectByName(name ,"SMESH")[0]
 
-    meshname = name+"_MMG_"+str(self.num)
+    meshname = self.currentName+"_MMG_"+str(self.num)
     smesh.SetName(outputMesh.GetMesh(), meshname)
     outputMesh.Compute() #no algorithms message for "Mesh_x" has been computed with warnings: -  global 1D algorithm is missing
 
@@ -426,54 +460,6 @@ button.
     self.num+=1
     return True
 
-  def PBSavePressed(self):
-    from datetime import datetime
-    if not(self.PrepareLigneCommande()): return
-    text = "# MMG hypothesis parameters\n"
-    text += "# Params for mesh : " +  self.LE_MeshSmesh.text() +"\n"
-    text += datetime.now().strftime("# Date : %d/%m/%y %H:%M:%S\n")
-    text += "# Command : "+self.commande+"\n"
-    text += self.getResumeData(separator="\n")
-    text += "\n\n"
-
-    try:
-      f=open(self.paramsFile,"a")
-    except:
-      QMessageBox.warning(self, "File", "Unable to open "+self.paramsFile)
-      return
-    try:
-      f.write(text)
-    except:
-      QMessageBox.warning(self, "File", "Unable to write "+self.paramsFile)
-      return
-    f.close()
-
-  def SP_toStr(self, widget):
-    """only for a QLineEdit widget"""
-    #cr, pos=widget.validator().validate(res, 0) #n.b. "1,3" is acceptable !locale!
-    try:
-      val=float(widget.text())
-    except:
-      QMessageBox.warning(self, widget.titleForWarning, "float value is incorrect: '"+widget.text()+"'")
-      res=str(widget.validator().bottom())
-      widget.setProperty("text", res)
-      return res
-    valtest=widget.validator().bottom()
-    if valtest!=None:
-      if val<valtest:
-        QMessageBox.warning(self, widget.titleForWarning, "float value is under minimum: "+str(val)+" < "+str(valtest))
-        res=str(valtest)
-        widget.setProperty("text", res)
-        return res
-    valtest=widget.validator().top()
-    if valtest!=None:
-      if val>valtest:
-        QMessageBox.warning(self, widget.titleForWarning, "float value is over maximum: "+str(val)+" > "+str(valtest))
-        res=str(valtest)
-        widget.setProperty("text", res)
-        return res    
-    return str(val)
-
   def getResumeData(self, separator="\n"):
     text=""
     text+="RepairBeforeCompute="+str(self.CB_RepairBeforeCompute.isChecked())+separator
@@ -491,11 +477,16 @@ button.
     self.close()
 
   def PBMeshFilePressed(self):
-    fd = QFileDialog(self, "select an existing Mesh file", self.LE_MeshFile.text(), "Mesh-Files (*.mesh);;All Files (*)")
+    filter_string = "All mesh formats (*.inp *.msh *.avs *.cgns *.xml *.e *.exo *.f3grid *.h5m *.mdpa *.mesh *.meshb *.med *.bdf *.fem *.nas *.vol *.vol.gz *.msh *.obj *.off *.post *.post.gz *.dato *.dato.gz *.ply *.stl *.dat *.node *.ele *.svg *.su2 *.ugrid *.vtk *.vtu *.wkt *.xdmf *.xmf)"
+
+    fd = QFileDialog(self, "select an existing mesh file", self.LE_MeshFile.text(), filter_string + ";;All Files (*)")
     if fd.exec_():
       infile = fd.selectedFiles()[0]
       self.LE_MeshFile.setText(infile)
       self.fichierIn=str(infile)
+      self.currentName = os.path.splitext(os.path.basename(self.fichierIn))[0]
+      if os.path.splitext(self.fichierIn)[-1] != '.med':
+          self.GenMedFromAny(self.fichierIn)
       if self.values is not None:
         self.values.DeleteMesh()
       self.values = None
@@ -539,18 +530,21 @@ button.
     self.values = Values(myName, 0)
     #print "MeshSmeshNameChanged", myName
     self.MeshIn=myName
+    self.currentName = myName
     self.LE_MeshSmesh.setText(myName)
     self.LE_MeshFile.setText("")
     self.fichierIn=""
     self.isFile = False
 
   def meshFileNameChanged(self):
+    #FIXME Change in name Gen new med
     self.fichierIn=str(self.LE_MeshFile.text())
     #print "meshFileNameChanged", self.fichierIn
     if os.path.exists(self.fichierIn): 
       self.__selectedMesh=None
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
+      self.currentname = os.path.basename(self.fichierIn)
       return
     QMessageBox.warning(self, "Mesh file", "File doesn't exist")
 
@@ -563,19 +557,13 @@ button.
     return
 
   def prepareFichier(self):
-    self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
-    if os.path.exists(self.fichierIn):
-        os.remove(self.fichierIn)
-    if str(type(self.__selectedMesh)) == "<class 'salome.smesh.smeshBuilder.Mesh'>":
-        self.__selectedMesh.ExportGMF(self.fichierIn)
-    else:
-        self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
+      self.GenMeshFromMed()
 
   def PrepareLigneCommande(self):
     if self.fichierIn=="" and self.MeshIn=="":
       QMessageBox.critical(self, "Mesh", "select an input mesh")
       return False
-    if self.__selectedMesh!=None: self.prepareFichier()
+    if self.__selectedMesh is not None: self.prepareFichier()
     if not (os.path.isfile(self.fichierIn)):
       QMessageBox.critical(self, "File", "unable to read GMF Mesh in "+str(self.fichierIn))
       return False

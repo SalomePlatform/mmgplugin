@@ -1,19 +1,21 @@
 import SMESH
 import salome
 import os
-import sys
 from salome.smesh import smeshBuilder
 from math import *
 
 class Values():
-    def __init__(self, MeshName, num):
+    def __init__(self, MeshName, num, currentName=""):
         self.geomapp = 0.01
         self.ridge = 45
         self.hmin = 0.01
         self.hmax = 10
         self.hgrad = 1.3
         self.MeshName = MeshName
-        self.CpyName = os.path.basename(os.path.splitext(MeshName)[0]) + '_Repaired_' + str(num)
+        if currentName != "":
+            self.CpyName = currentName + '_Repaired_' + str(num)
+        else:
+            self.CpyName = os.path.basename(os.path.splitext(MeshName)[0]) + '_Repaired_' + str(num)
         salome.salome_init()
         study = salome.myStudy
         self.smesh_builder = smeshBuilder.New()

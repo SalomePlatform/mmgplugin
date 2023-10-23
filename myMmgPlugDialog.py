@@ -25,8 +25,6 @@ import os, subprocess
 import tempfile
 import re
 import sys
-import meshio
-import warnings
 from mmgplugin.MyPlugDialog_ui import Ui_MyPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
@@ -63,7 +61,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     # iconfolder=os.path.dirname(os.path.abspath(__file__))
 
     self.iconfolder=os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "resources", "smesh")
-    #print "MGSurfOptPlugDialog iconfolder",iconfolder
     icon = QIcon()
     icon.addFile(os.path.join(self.iconfolder,"select1.png"))
     self.PB_MeshSmesh.setIcon(icon)
@@ -139,7 +136,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     TmpMesh.ExportMED(self.fichierIn)
     smesh.RemoveMesh(TmpMesh)
     """
-    sys.stderr.write("test")
     TmpMesh = meshio.read(fileIn)
     TmpMesh.write(self.fichierIn, 'med')
     """
@@ -381,9 +377,9 @@ button.
     if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
       if self.values is None:
         if self.fichierIn != "":
-          self.values = Values(self.fichierIn, 0)
+          self.values = Values(self.fichierIn, 0, self.currentName)
         else:
-          self.values = Values(self.MeshIn, 0)
+          self.values = Values(self.MeshIn, 0, self.currentName)
       self.Repair()
       if not self.CB_GenRepair.isChecked() and not self.CB_RepairOnly.isChecked():
           self.numRepair-=1
@@ -418,7 +414,6 @@ button.
     maStudy=salome.myStudy
     smesh.UpdateStudy()
     self.GenMedFromAny(self.fichierOut)
-    sys.stderr.write(self.fichierIn + '   ' + self.fichierOut + '\n')
     (outputMesh, status) = smesh.CreateMeshesFromMED(self.fichierIn)
     outputMesh=outputMesh[0]
     name=str(self.LE_MeshSmesh.text())
@@ -499,7 +494,7 @@ button.
       if self.values is not None:
         self.values.DeleteMesh()
       self.values = None
-      self.values = Values(self.fichierIn, 0)
+      self.values = Values(self.fichierIn, 0, self.currentName)
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
@@ -517,10 +512,6 @@ button.
     mySObject, myEntry = guihelper.getSObjectSelected()
     if CORBA.is_nil(mySObject) or mySObject==None:
       QMessageBox.critical(self, "Mesh", "select an input mesh")
-      #self.LE_MeshSmesh.setText("")
-      #self.MeshIn=""
-      #self.LE_MeshFile.setText("")
-      #self.fichierIn=""
       return
     self.smeshStudyTool = SMeshStudyTools()
     try:
@@ -533,13 +524,12 @@ button.
       return
     myName = mySObject.GetName()
 
+    self.MeshIn=myName
+    self.currentName = myName
     if self.values is not None:
         self.values.DeleteMesh()
     self.values = None
-    self.values = Values(myName, 0)
-    #print "MeshSmeshNameChanged", myName
-    self.MeshIn=myName
-    self.currentName = myName
+    self.values = Values(myName, 0, self.currentName)
     self.LE_MeshSmesh.setText(myName)
     self.LE_MeshFile.setText("")
     self.fichierIn=""
@@ -548,7 +538,6 @@ button.
   def meshFileNameChanged(self):
     #FIXME Change in name Gen new med
     self.fichierIn=str(self.LE_MeshFile.text())
-    #print "meshFileNameChanged", self.fichierIn
     if os.path.exists(self.fichierIn): 
       self.__selectedMesh=None
       self.MeshIn=""

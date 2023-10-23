@@ -127,13 +127,22 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     if os.path.exists(self.fichierIn):
         os.remove(self.fichierIn)
 
-    """
-    TmpMesh = smesh.CreateMeshesFromGMF(fileIn)[0] #FIXME Depends on the format
+    ext = os.path.splitext(fileIn)[-1]
+    if ext == '.mesh' or ext == '.meshb':
+        TmpMesh = smesh.CreateMeshesFromGMF(fileIn)[0]
+    elif ext == '.cgns':
+        TmpMesh = smesh.CreateMeshesFromCGNS(fileIn)[0][0]
+    elif ext == '.stl':
+        TmpMesh = smesh.CreateMeshesFromSTL(fileIn)
+    elif ext == '.unv':
+        TmpMesh = smesh.CreateMeshesFromUNV(fileIn)
     TmpMesh.ExportMED(self.fichierIn)
     smesh.RemoveMesh(TmpMesh)
     """
+    sys.stderr.write("test")
     TmpMesh = meshio.read(fileIn)
     TmpMesh.write(self.fichierIn, 'med')
+    """
 
   def GenMeshFromMed(self):
     self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
@@ -477,7 +486,7 @@ button.
     self.close()
 
   def PBMeshFilePressed(self):
-    filter_string = "All mesh formats (*.inp *.msh *.avs *.cgns *.xml *.e *.exo *.f3grid *.h5m *.mdpa *.mesh *.meshb *.med *.bdf *.fem *.nas *.vol *.vol.gz *.msh *.obj *.off *.post *.post.gz *.dato *.dato.gz *.ply *.stl *.dat *.node *.ele *.svg *.su2 *.ugrid *.vtk *.vtu *.wkt *.xdmf *.xmf)"
+    filter_string = "All mesh formats (*.unv *.cgns *.mesh *.meshb *.med *.stl)"
 
     fd = QFileDialog(self, "select an existing mesh file", self.LE_MeshFile.text(), filter_string + ";;All Files (*)")
     if fd.exec_():

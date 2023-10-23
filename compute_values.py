@@ -17,12 +17,12 @@ class Values():
         else:
             self.CpyName = os.path.basename(os.path.splitext(MeshName)[0]) + '_Repaired_' + str(num)
         salome.salome_init()
-        study = salome.myStudy
+        self.study = salome.myStudy
         self.smesh_builder = smeshBuilder.New()
         self.smesh_builder.UpdateStudy()
         self.CpyMesh = None
-        if (len(study.FindObjectByName(self.MeshName, 'SMESH')) > 0):
-            self.SelectedObject = study.FindObjectByName(self.MeshName, 'SMESH')[-1]
+        if (len(self.study.FindObjectByName(self.MeshName, 'SMESH')) > 0):
+            self.SelectedObject = self.study.FindObjectByName(self.MeshName, 'SMESH')[-1]
         else:
             self.SelectedObject = None
             FullMesh = self.smesh_builder.CreateMeshesFromMED(self.MeshName)[0] #TODO error handling (self.MyMesh[1].code, self.MyMesh[1].hasBadMesh)

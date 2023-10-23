@@ -360,6 +360,8 @@ button.
       self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromMED(self.values.MeshName)[0][0]
       self.values.CpyMesh.SetName(self.values.CpyName)
     else:
+      if self.values.SelectedObject is None:
+        self.values.SelectedObject = self.values.study.FindObjectByName(self.values.MeshName, 'SMESH')[-1]
       self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
       
     self.numRepair+=1
@@ -374,14 +376,12 @@ button.
       return False
 
     if self.isFile and os.path.splitext(self.fichierIn)[-1] != '.med' and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
-      sys.stderr.write(str(self.COB_Remesher.currentIndex()) + '  in if\n')
       self.GenMedFromAny(self.fichierIn)
 
     CpyFichierIn = self.fichierIn
     CpyMeshIn = self.MeshIn
     CpySelectedMesh = self.__selectedMesh
     if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
-      sys.stderr.write(str(self.values is None) + '  ' + self.fichierIn + '  ' + self.MeshIn + '\n')
       if self.values is None:
         if self.fichierIn != "":
           self.values = Values(self.fichierIn, 0, self.currentName)

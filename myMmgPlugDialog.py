@@ -133,7 +133,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
         TmpMesh = smesh.CreateMeshesFromSTL(fileIn)
     elif ext == '.unv':
         TmpMesh = smesh.CreateMeshesFromUNV(fileIn)
-    TmpMesh.ExportMED(self.fichierIn)
+    TmpMesh.ExportMED(self.fichierIn, autoDimension=True)
     smesh.RemoveMesh(TmpMesh)
     """
     TmpMesh = meshio.read(fileIn)

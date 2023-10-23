@@ -30,7 +30,7 @@ from qtsalome import *
 
 # Import des panels
 
-from ViewText_ui import Ui_ViewExe
+from mmgplugin.ViewText_ui import Ui_ViewExe
 
 verbose = True
 

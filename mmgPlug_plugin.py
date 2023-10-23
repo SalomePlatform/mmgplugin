@@ -21,7 +21,7 @@
 # if you already have plugins defined in a salome_plugins.py file, add this file at the end.
 # if not, copy this file as ${HOME}/Plugins/smesh_plugins.py or ${APPLI}/Plugins/smesh_plugins.py
 
-def Mmgs(context):
+def Mmg(context):
   # get context study, salomeGui
   study = context.study
   sg = context.sg
@@ -31,6 +31,6 @@ def Mmgs(context):
   import tempfile
   from qtsalome import QFileDialog, QMessageBox
   
-  import myMmgsPlugDialog
-  window = myMmgsPlugDialog.getDialog()
+  import mmgplugin.myMmgPlugDialog as myMmgPlugDialog
+  window = myMmgPlugDialog.getDialog()
   window.show()

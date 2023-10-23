@@ -2,9 +2,11 @@ import subprocess
 import time
 import re
 import os
+import time
 import shutil
 from collections import defaultdict
 import numpy as np
+from math import sqrt
 from scipy.fft import fft
 from plotter import *
 from my_gnuplot import * 
@@ -347,6 +349,57 @@ def perform_hsiz_hausd_gnu_plot():
         # plots
         my_gnu_plot('analysis.gp', 'analysis.dat', hausd_values, hsiz_values, quality_measures, 'hausd', 'hsiz', 'quality', file_name.split('.')[0] + "_hausd_hsiz")
 
+def perform_hsiz_box_variations():
+    """observations are done by changing hausd and the bounding box size"""
+    def vol(box):
+        return box[0]*box[1]*box[2]
+    def norm(box):
+        return sqrt(box[0]**2 + box[1]**2 + box[2]**2)
+
+    hsiz_values = np.linspace(1, 10, 30)
+
+    for file_path in perform_mesh_ls():
+        file_name = file_path.split('/')[-1]
+        output_file_name = os.path.join(OUTPUT_PATH, file_name[:-4] + "o.mesh")
+        liste = results_dict[file_name]
+
+        for j, _ in enumerate(hsiz_values):
+            perform_remeshing(file_path, hausd=None, hgrad=None, hmin=None, hmax=None, hsiz=hsiz_values[j])
+            value = perform_analysis(output_file_name)
+            results_dict[file_name].append(value)
+
+            empty_dir()
+
+    #sort the dictionnary entries by volume, size_min, size_max
+    analyses_sorted_by_vol = dict(sorted(results_dict.items(), key=lambda x: vol(x[1][0].box)))
+    analyses_sorted_by_norm = dict(sorted(results_dict.items(), key=lambda x: norm(x[1][0].box)))
+
+    #store their dimensions
+    boxes_sorted_by_vol = np.array([vol(elt[0].box) for name , elt in analyses_sorted_by_vol.items()])
+    boxes_sorted_by_norm = np.array([norm(elt[0].box) for name , elt in analyses_sorted_by_norm.items()])
+
+    Xvol, Yvol = np.meshgrid(boxes_sorted_by_vol, hsiz_values)
+    Xnorm, Ynorm = np.meshgrid(boxes_sorted_by_norm, hsiz_values)
+
+    vol_quality_measures = np.full_like(Xvol, -1)
+    norm_quality_measures = np.full_like(Xnorm, -1)
+
+    i = 0
+    for file_name, liste in analyses_sorted_by_vol.items():
+        for j, _ in enumerate(hsiz_values):
+            vol_quality_measures[j][i] = liste[-j].quality
+        i += 1
+
+    i = 0
+    for file_name, liste in analyses_sorted_by_norm.items():
+        for j, _ in enumerate(hsiz_values):
+            norm_quality_measures[j][i] = liste[-j].quality
+        i += 1
+
+    # plots
+    my_gnu_plot('analysis.gp', 'analysis.dat', boxes_sorted_by_vol, hsiz_values, vol_quality_measures, 'volume', 'hsiz', 'quality', "volume_hsiz_quality")
+    my_gnu_plot('analysis.gp', 'analysis.dat', boxes_sorted_by_norm, hsiz_values, norm_quality_measures, 'norm', 'hsiz', 'quality', "norm_hsiz_quality")
+
 def main():
     """main"""
 
@@ -362,10 +415,16 @@ def main():
     # analyses
     #perform_3D_graph()
     #perform_hausd_variations()
-
     """
+    set_output_plot_path('hsiz_box')
+    perform_hsiz_box_variations()
+
+    set_output_plot_path('hausd_hsiz')
+    perform_hsiz_hausd_gnu_plot()
+
     set_output_plot_path('hausd_box')
     perform_hausd_box_variations()
+
     set_output_plot_path('hausd_hgrad')
     perform_hausd_hgrad_variations()
 
@@ -375,11 +434,40 @@ def main():
     set_output_plot_path('hmin_hmax_hausd')
     perform_hmin_hmax_hausd_variations()
 
-    set_output_plot_path('hausd_hsiz')
-    perform_hsiz_hausd_gnu_plot()
-
     set_output_plot_path('hmin_hmax_hgrad')
     perform_hmin_hmax_hgrad_variations()
+
+    hgrad_values = np.linspace(1, 1.4, 100)
+    quality_measures = [0]*len(hgrad_values)
+    for file_path in perform_mesh_ls():
+        file_name = file_path.split('/')[-1]
+        output_file_name = os.path.join(OUTPUT_PATH, file_name[:-4] + "o.mesh")
+        execution_time = [0]*len(hgrad_values)
+
+        for i, _ in enumerate(hgrad_values):
+            start_time = time.time()
+            perform_remeshing(file_path, hausd=None, hgrad=hgrad_values[i], hmin=None, hmax=None, hsiz=None)
+            value = perform_analysis(output_file_name)
+            results_dict[file_name].append(value)
+
+            quality_measures[i] = value.quality
+
+            end_time = time.time()
+            execution_time[i] = (end_time - start_time)*50000
+
+        index = 0
+        for i, _ in enumerate(quality_measures):
+            if quality_measures[i] > quality_measures[index]:
+                index = i
+
+        fig, ax = plt.subplots()
+
+        ax.plot(hgrad_values, quality_measures, label='quality')
+
+        ax.plot(hgrad_values, execution_time, label='time * 50000')
+
+        ax.legend()
+        plt.show()
 
     amplitude = 100
     N_echantillons = 1000
@@ -429,14 +517,7 @@ def main():
         print("signal:", quality_measures)
         print("fft_result:", fft_result)
         print("freqs:", freqs)
-
-    from mechanic import *
-    faces = mesh.GetElementsByType(SMESH.FACE)
-    aspects = [mesh.GetAspectRatio(id) for id in faces]
-    print(aspects)
     """
-
-
 
 if __name__ == "__main__":
     main()

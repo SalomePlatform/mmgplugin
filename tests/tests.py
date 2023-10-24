@@ -30,6 +30,10 @@ class Test:
         self.choice = choice
         self.sandbox = sandbox
         self.default = default
+        if self.sandbox is None:
+            self.sandbox = []
+        if self.choice is None:
+            self.choice = []
 
 def perform_ls(path=SURFACE_PATH):
   """perform a simple ls of the path parameter, return a list of files"""

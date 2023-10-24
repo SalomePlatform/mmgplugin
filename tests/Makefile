@@ -2,9 +2,10 @@ OUTPUT_FILES := $(wildcard **/*_output.*)
 all:
 	./launch.sh
 
-clean_out:
-	rm $(OUTPUT_FILES)
-clean:
+delete_gen:
 	rm -rf gen_surface
+
+clean:
+	rm $(OUTPUT_FILES)
 
 .PHONY: all clean

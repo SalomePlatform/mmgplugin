@@ -11,6 +11,7 @@ import os
 salome.salome_init()
 import salome_notebook
 notebook = salome_notebook.NoteBook()
+import os
 sys.path.insert(0, f'{os.environ["PWD"]}/archive_meshes')
 
 ###

@@ -93,6 +93,8 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.label_info.setPixmap(pixmap)
     self.label_info.setCursor(Qt.PointingHandCursor)
 
+    self.maFenetre = None
+
   def connecterSignaux(self) :
     self.PB_Cancel.clicked.connect(self.PBCancelPressed)
     self.PB_Default.clicked.connect(self.clean)
@@ -397,9 +399,9 @@ button.
       if not(self.PrepareLigneCommande()):
         #warning done yet
         #QMessageBox.warning(self, "Compute", "Command not found")
-        return
+        return False
         
-      maFenetre=MyViewText(self,self.commande)
+      self.maFenetre=MyViewText(self,self.commande)
       if not self.CB_GenRepair.isChecked() and self.values is not None:
           self.values.DeleteMesh()
 
@@ -407,6 +409,7 @@ button.
     self.MeshIn = CpyMeshIn
     self.__selectedMesh = CpySelectedMesh
     self.values = None
+    return True
 
   def enregistreResultat(self):
     import salome

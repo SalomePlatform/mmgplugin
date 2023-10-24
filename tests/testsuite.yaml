@@ -1,0 +1,30 @@
+- filename: disk_flat.mesh
+  swap: true
+  insert: true
+  move: true
+  hausd: 0.01
+  hgrad: 1.1
+  hmin: 0.1
+  hmax: 2
+  ar: 45
+  choice:
+    - auto
+  sandbox: []
+  default: false
+
+- filename: tiny_sphere.mesh
+  swap: true
+  insert: true
+  move: true
+  hausd: 0.1
+  hgrad: 1.3
+  hmin: 0.01
+  hmax: 1
+  ar: 45
+  choice:
+    - auto
+    - gen
+  sandbox:
+    - left: hsiz
+      right: 0.5
+  default: true

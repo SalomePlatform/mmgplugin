@@ -93,6 +93,8 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.label_info.setPixmap(pixmap)
     self.label_info.setCursor(Qt.PointingHandCursor)
 
+    self.maFenetre = None
+
   def connecterSignaux(self) :
     self.PB_Cancel.clicked.connect(self.PBCancelPressed)
     self.PB_Default.clicked.connect(self.clean)
@@ -118,6 +120,8 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.label_info.mouseReleaseEvent = self.GetLabelEvent
 
   def GenMedFromAny(self, fileIn):
+    if fileIn.endswith('.med'):
+        return
     from salome.smesh import smeshBuilder
     smesh = smeshBuilder.New()
     self.fichierIn=tempfile.mktemp(suffix=".med",prefix="ForMMG_")
@@ -358,6 +362,8 @@ button.
       self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromMED(self.values.MeshName)[0][0]
       self.values.CpyMesh.SetName(self.values.CpyName)
     else:
+      if self.values.SelectedObject is None:
+        self.values.SelectedObject = self.values.study.FindObjectByName(self.values.MeshName, 'SMESH')[-1]
       self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
       
     self.numRepair+=1
@@ -370,6 +376,9 @@ button.
     if not self.CB_RepairBeforeCompute.isChecked() and not self.CB_RepairOnly.isChecked():
       QMessageBox.warning(self, "Compute", "No actions triggered. Please set one in Advanced Remeshing Options.")
       return False
+
+    if self.isFile and os.path.splitext(self.fichierIn)[-1] != '.med' and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
+      self.GenMedFromAny(self.fichierIn)
 
     CpyFichierIn = self.fichierIn
     CpyMeshIn = self.MeshIn
@@ -390,16 +399,17 @@ button.
       if not(self.PrepareLigneCommande()):
         #warning done yet
         #QMessageBox.warning(self, "Compute", "Command not found")
-        return
+        return False
         
-      maFenetre=MyViewText(self,self.commande)
-      if not self.CB_GenRepair.isChecked():
+      self.maFenetre=MyViewText(self,self.commande)
+      if not self.CB_GenRepair.isChecked() and self.values is not None:
           self.values.DeleteMesh()
 
     self.fichierIn = CpyFichierIn
     self.MeshIn = CpyMeshIn
     self.__selectedMesh = CpySelectedMesh
-    self.values.CpyMesh = None
+    self.values = None
+    return True
 
   def enregistreResultat(self):
     import salome
@@ -489,12 +499,12 @@ button.
       self.LE_MeshFile.setText(infile)
       self.fichierIn=str(infile)
       self.currentName = os.path.splitext(os.path.basename(self.fichierIn))[0]
-      if os.path.splitext(self.fichierIn)[-1] != '.med':
-          self.GenMedFromAny(self.fichierIn)
+      """
       if self.values is not None:
         self.values.DeleteMesh()
       self.values = None
       self.values = Values(self.fichierIn, 0, self.currentName)
+      """
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
       self.__selectedMesh=None
@@ -526,10 +536,12 @@ button.
 
     self.MeshIn=myName
     self.currentName = myName
+    """
     if self.values is not None:
         self.values.DeleteMesh()
     self.values = None
     self.values = Values(myName, 0, self.currentName)
+    """
     self.LE_MeshSmesh.setText(myName)
     self.LE_MeshFile.setText("")
     self.fichierIn=""
@@ -599,6 +611,14 @@ button.
     return True
 
   def clean(self):
+    if self.values is None and self.currentName != "" and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
+        if self.fichierIn != "":
+            cpy = self.fichierIn
+            self.GenMedFromAny(self.fichierIn)
+            self.values = Values(self.fichierIn, 0, self.currentName)
+            self.fichierIn = cpy
+        elif self.MeshIn != "":
+            self.values = Values(self.MeshIn, 0, self.currentName)
     if self.values is not None:
         self.values.ComputeNewDefaultValues()
         self.SP_Geomapp.setProperty("value", self.values.geomapp)
@@ -606,19 +626,21 @@ button.
         self.SP_Gradation.setProperty("value", self.values.hgrad)
         self.SP_Hmin.setProperty("value", self.values.hmin)
         self.SP_Hmax.setProperty("value", self.values.hmax)
+        self.values.DeleteMesh()
     else: # No file provided, default from MMG
         self.SP_Geomapp.setProperty("value", 0.01)
         self.SP_Ridge.setProperty("value", 45.0)
         self.SP_Gradation.setProperty("value", 1.3)
         self.SP_Hmin.setProperty("value", 0.01)
         self.SP_Hmax.setProperty("value", 10)
+    self.values = None
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
     self.CB_SwapEdge.setChecked(True)
     self.CB_RepairBeforeCompute.setChecked(True)
     self.CB_RepairOnly.setChecked(False)
     self.CB_GenRepair.setChecked(False)
-    self.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMGS'])
+    #self.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMGS'])
 
     from PyQt5 import QtCore, QtGui, QtWidgets
     _translate = QtCore.QCoreApplication.translate

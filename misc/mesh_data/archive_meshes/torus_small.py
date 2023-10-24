@@ -10,7 +10,8 @@ import salome
 salome.salome_init()
 import salome_notebook
 notebook = salome_notebook.NoteBook()
-sys.path.insert(0, r'/home/catB/ff275963/SALOME-9.11.0-native-UB22.04-SRC/BINARIES-UB22.04/SMESH/share/salome/plugins/smesh/mmgplugin/misc/mesh_data/archive_meshes')
+import os
+sys.path.insert(0, f'{os.environ["PWD"]}/archive_meshes')
 
 ###
 ### GEOM component

@@ -5,3 +5,4 @@ __pycache__
 *.swp
 misc/mesh_data/study_meshes/
 *.autosave
+tests/gen_surface

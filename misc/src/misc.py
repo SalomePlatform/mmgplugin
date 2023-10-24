@@ -28,7 +28,7 @@ def perform_mesh_ls(path=LS_PATH):
     with subprocess.Popen(["ls", path], stderr = subprocess.PIPE, stdout=subprocess.PIPE, text=True) as ls_process:
         output, _ = ls_process.communicate()
         logger.debug("ls result : " + output)
-        return [os.path.join(LS_PATH, file) for file in output.splitlines() if file.endswith(".mesh")]
+        return [os.path.join(path, file) for file in output.splitlines() if file.endswith(".mesh")]
 
 def pretty_print_dic(dic):
     """pretty_print"""

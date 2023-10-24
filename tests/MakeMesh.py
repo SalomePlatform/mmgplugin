@@ -58,7 +58,7 @@ def perform_py_ls(path=LS_PATH):
     """perform a simple ls of the path parameter, extract the .py files return a list of files"""
     with subprocess.Popen(["ls", path], stderr = subprocess.PIPE, stdout=subprocess.PIPE, text=True) as ls_process:
         output, _ = ls_process.communicate()
-        return [os.path.join(LS_PATH, file) for file in output.splitlines() if file.endswith(".py")]
+        return [os.path.join(path, file) for file in output.splitlines() if file.endswith(".py")]
 
 def create_mesh_file(input_file, output_dir):
     # Start Salome session

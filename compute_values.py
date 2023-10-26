@@ -114,8 +114,6 @@ class Values():
             EqualElements = self.CpyMesh.FindEqualElements()
             self.CpyMesh.MergeElements(EqualElements)
             self.DoubleFaces = self.GetInfoFromFilter(SMESH.FACE, SMESH.FT_EqualFaces)
-            with open(os.path.join(os.path.expanduser('~'), 'logs.txt'), 'a') as f:
-                f.write(str(tolerance) + '   ' + str(self.DoubleFaces) + '\n')
             tolerance += self.min_length/100
 
         self.FillInfos()

@@ -4,4 +4,7 @@ mkdir -p surface
 mkdir -p 3D
 mkdir -p 2D
 
-~/SALOME-9.11.0-native-UB22.04-SRC/salome shell -l -script MakeMesh.py
+cd ../misc/mesh_data
+make
+cd ../../tests
+cp ../misc/mesh_data/archive_meshes/*.mesh gen_surface

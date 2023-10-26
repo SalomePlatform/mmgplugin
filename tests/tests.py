@@ -3,14 +3,14 @@ import subprocess
 import sys
 import yaml
 
-sys.path.append('/home/catB/ff275963/SALOME-9.11.0-native-UB22.04-SRC/BINARIES-UB22.04/SMESH/share/salome/plugins/smesh/mmgplugin/')
-sys.path.append('/home/catB/ff275963/SALOME-9.11.0-native-UB22.04-SRC/BINARIES-UB22.04/SMESH/share/salome/plugins/smesh/')
+sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh", "mmgplugin"))
+sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh"))
 
 from myMmgPlugDialog import *
 
 result_dict = {}
 
-ROOT_PATH = '/home/catB/ff275963/SALOME-9.11.0-native-UB22.04-SRC/BINARIES-UB22.04/SMESH/share/salome/plugins/smesh/mmgplugin/tests'
+ROOT_PATH = os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh", "mmgplugin", "tests")
 SURFACE_PATH = os.path.join(ROOT_PATH, 'surface')
 THREE_D_PATH = os.path.join(ROOT_PATH, '3D')
 TWO_D_PATH = os.path.join(ROOT_PATH, '2D')

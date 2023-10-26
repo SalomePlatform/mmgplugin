@@ -367,6 +367,7 @@ button.
       self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
       
     self.numRepair+=1
+    self.values.is3D = (self.COB_Remesher.currentIndex() == REMESHER_DICT['MMG3D'])
     self.values.AnalysisAndRepair(self.CB_GenRepair.isChecked() or self.CB_RepairOnly.isChecked())
 
   def PBOKPressed(self):
@@ -377,13 +378,13 @@ button.
       QMessageBox.warning(self, "Compute", "No actions triggered. Please set one in Advanced Remeshing Options.")
       return False
 
-    if self.isFile and os.path.splitext(self.fichierIn)[-1] != '.med' and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
+    if self.isFile and os.path.splitext(self.fichierIn)[-1] != '.med' and self.COB_Remesher.currentIndex() != REMESHER_DICT['MMG2D']:
       self.GenMedFromAny(self.fichierIn)
 
     CpyFichierIn = self.fichierIn
     CpyMeshIn = self.MeshIn
     CpySelectedMesh = self.__selectedMesh
-    if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
+    if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.COB_Remesher.currentIndex() != REMESHER_DICT['MMG2D']:
       if self.values is None:
         if self.fichierIn != "":
           self.values = Values(self.fichierIn, 0, self.currentName)
@@ -611,7 +612,7 @@ button.
     return True
 
   def clean(self):
-    if self.values is None and self.currentName != "" and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
+    if self.values is None and self.currentName != "" and self.COB_Remesher.currentIndex() != REMESHER_DICT['MMG2D']:
         if self.fichierIn != "":
             cpy = self.fichierIn
             self.GenMedFromAny(self.fichierIn)

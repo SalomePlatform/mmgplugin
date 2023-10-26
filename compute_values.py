@@ -46,14 +46,20 @@ class Values():
         self.DoubleNodes = []
         self.DoubleEdges = []
         self.DoubleFaces = []
+        self.is3D = False
 
     def GetInfoFromFilter(self, ElementType, FilterName):
         aFilter = self.smesh_builder.GetFilter(ElementType, FilterName)
         return self.CpyMesh.GetIdsFromFilter(aFilter)
 
     def FillInfos(self):
-        # Get the faces aspect ratios
-        faces = self.CpyMesh.GetElementsByType(SMESH.FACE)
+        if self.is3D:
+            # Get the volumes ids
+            faces = self.CpyMesh.GetElementsByType(SMESH.VOLUME)
+        else:
+            # Get the faces ids
+            faces = self.CpyMesh.GetElementsByType(SMESH.FACE)
+        # Get the corresponding aspect ratios
         aspects = [self.CpyMesh.GetAspectRatio(id) for id in faces]
         self.avg_aspects = sum(aspects) / len(aspects) 
         
@@ -73,7 +79,10 @@ class Values():
                 break
             edges = []
             while len(edges) == 0:
-                LengthFilter = self.smesh_builder.GetFilter(SMESH.FACE, SMESH.FT_Length2D, SMESH.FT_LessThan, treshold)
+                if self.is3D:
+                    LengthFilter = self.smesh_builder.GetFilter(SMESH.VOLUME, SMESH.FT_MaxElementLength3D, SMESH.FT_LessThan, treshold)
+                else:
+                    LengthFilter = self.smesh_builder.GetFilter(SMESH.FACE, SMESH.FT_Length2D, SMESH.FT_LessThan, treshold)
                 edges = self.CpyMesh.GetIdsFromFilter(LengthFilter)
                 treshold += step
             self.min_length = treshold
@@ -114,8 +123,6 @@ class Values():
             EqualElements = self.CpyMesh.FindEqualElements()
             self.CpyMesh.MergeElements(EqualElements)
             self.DoubleFaces = self.GetInfoFromFilter(SMESH.FACE, SMESH.FT_EqualFaces)
-            with open(os.path.join(os.path.expanduser('~'), 'logs.txt'), 'a') as f:
-                f.write(str(tolerance) + '   ' + str(self.DoubleFaces) + '\n')
             tolerance += self.min_length/100
 
         self.FillInfos()

@@ -335,15 +335,16 @@ This tool allows your to adapt your mesh after a
 Boolean operation. It also allows you to repair a
 bad mesh (double elements or free elements).
 
-By pressing the 'Repair' button, you will generate a
-new mesh prepared for MMG from your input mesh.
-By pressing the 'Compute' button, you will repair
-your imput mesh if needed and adapt it with MMG with
-your selected parameters.
+By default, your mesh will be prepared for MMG.
+You can find the options to disable it or
+explicitely generate the repaired mesh in the
+'Advanced Remeshing Options' panel.
+By pressing the 'Remesh' button, your mesh will
+be adapted by MMG with your selected parameters.
 You can change the parameters to better fit you
 needs than with the default ones. Restore the
-default parameters by clicking on the 'Default'
-button.
+default parameters by clicking on the 'Restore
+Default Values' button.
             """)
 
   def Repair(self):

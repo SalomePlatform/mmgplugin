@@ -25,6 +25,7 @@ import os, subprocess
 import tempfile
 import re
 import sys
+import meshio
 from mmgplugin.MyPlugDialog_ui import Ui_MyPlugDialog
 from mmgplugin.myViewText import MyViewText
 from qtsalome import *
@@ -122,6 +123,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
   def GenMedFromAny(self, fileIn):
     if fileIn.endswith('.med'):
         return
+    """
     from salome.smesh import smeshBuilder
     smesh = smeshBuilder.New()
     self.fichierIn=tempfile.mktemp(suffix=".med",prefix="ForMMG_")
@@ -142,7 +144,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     """
     TmpMesh = meshio.read(fileIn)
     TmpMesh.write(self.fichierIn, 'med')
-    """
 
   def GenMeshFromMed(self):
     self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")

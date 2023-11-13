@@ -1095,7 +1095,7 @@ Please, refer to the information tip for the documentation of MMG.</string>
         <string>Default values are computed once the mesh is loaded, but the default values from MMG are provided before that.</string>
        </property>
        <property name="text">
-        <string>Restore Default Values</string>
+        <string>Compute Default Values</string>
        </property>
       </widget>
      </item>

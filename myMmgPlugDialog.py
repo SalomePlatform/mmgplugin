@@ -343,7 +343,7 @@ By pressing the 'Remesh' button, your mesh will
 be adapted by MMG with your selected parameters.
 You can change the parameters to better fit you
 needs than with the default ones. Restore the
-default parameters by clicking on the 'Restore
+default parameters by clicking on the 'Compute
 Default Values' button.
             """)
 

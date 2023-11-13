@@ -354,6 +354,10 @@ Default Values' button.
     if self.values is None:
       QMessageBox.critical(self, "Mesh", "internal error, check the logs")
       return False
+    if self.fichierIn != "":
+        self.values.MeshName = self.fichierIn
+    if self.MeshIn != "":
+        self.values.MeshName = self.MeshIn
     if self.values.CpyName.endswith('_0'):
       self.values.DeleteMesh()
 

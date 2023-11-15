@@ -73,7 +73,7 @@
   ar: 45
   choice:
     - auto
-  sandbox:
+  sandbox: []
   default: false
 
 - filename: cylinder.mesh

@@ -32,6 +32,8 @@ class Test:
         self.default = default
         if self.sandbox is None:
             self.sandbox = []
+        else:
+            self.sandbox = [{'left' : '-' + elt['left'], 'right' : elt['right']} for elt in self.sandbox]
         if self.choice is None:
             self.choice = []
 

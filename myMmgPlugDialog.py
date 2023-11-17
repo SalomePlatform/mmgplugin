@@ -343,7 +343,7 @@ By pressing the 'Remesh' button, your mesh will
 be adapted by MMG with your selected parameters.
 You can change the parameters to better fit you
 needs than with the default ones. Restore the
-default parameters by clicking on the 'Restore
+default parameters by clicking on the 'Compute
 Default Values' button.
             """)
 
@@ -354,6 +354,10 @@ Default Values' button.
     if self.values is None:
       QMessageBox.critical(self, "Mesh", "internal error, check the logs")
       return False
+    if self.fichierIn != "":
+        self.values.MeshName = self.fichierIn
+    if self.MeshIn != "":
+        self.values.MeshName = self.MeshIn
     if self.values.CpyName.endswith('_0'):
       self.values.DeleteMesh()
 

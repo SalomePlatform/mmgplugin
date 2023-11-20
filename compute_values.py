@@ -62,25 +62,30 @@ class Values():
     self.FreeBorders = self.GetInfoFromFilter(SMESH.EDGE, SMESH.FT_FreeBorders)
     self.FreeEdges = self.GetInfoFromFilter(SMESH.FACE, SMESH.FT_FreeEdges)
 
-    # Get minimal length (approx)
-    start_treshold = self.diag / 100
-    treshold = start_treshold
-    step = start_treshold
-    self.min_length = treshold
-    edges = []
-    while True:
-      if len(edges) == 1:
-        break
-      edges = []
-      while len(edges) == 0:
-        LengthFilter = self.smesh_builder.GetFilter(SMESH.FACE, SMESH.FT_Length2D, SMESH.FT_LessThan, treshold)
-        edges = self.CpyMesh.GetIdsFromFilter(LengthFilter)
-        treshold += step
-      self.min_length = treshold
-      if step < treshold/1000:
-        break
-      step /= 1.5
+
+    self.DoubleNodes = self.GetInfoFromFilter(SMESH.NODE, SMESH.FT_EqualNodes)
+    self.DoubleEgdes = self.GetInfoFromFilter(SMESH.EDGE, SMESH.FT_EqualEdges)
+    self.DoubleFaces = self.GetInfoFromFilter(SMESH.FACE, SMESH.FT_EqualFaces)
+    if self.DoubleFaces != [] or self.DoubleEgdes != [] or self.DoubleNodes != []:
+      # Get minimal length (approx)
+      start_treshold = self.diag / 100
       treshold = start_treshold
+      step = start_treshold
+      self.min_length = treshold
+      edges = []
+      while True:
+        if len(edges) == 1:
+          break
+        edges = []
+        while len(edges) == 0:
+          LengthFilter = self.smesh_builder.GetFilter(SMESH.FACE, SMESH.FT_Length2D, SMESH.FT_LessThan, treshold)
+          edges = self.CpyMesh.GetIdsFromFilter(LengthFilter)
+          treshold += step
+        self.min_length = treshold
+        if step < treshold/1000:
+          break
+        step /= 1.5
+        treshold = start_treshold
 
     self.CoincidentNodes = self.CpyMesh.FindCoincidentNodesOnPart([self.CpyMesh], self.min_length/1000, [], 0)
     # Get infos about double elements

@@ -396,7 +396,6 @@ Default Values' button.
     CpySelectedMesh = self.__selectedMesh
     if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
       if self.values is None:
-        sys.stderr.write(self.fichierIn + ' | ' + self.currentName + '\n')
         if self.fichierIn != "":
           self.values = Values(self.fichierIn, 0, self.currentName)
         else:

@@ -100,7 +100,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.PB_Default.clicked.connect(self.clean)
     self.PB_Help.clicked.connect(self.PBHelpPressed)
     self.PB_OK.clicked.connect(self.PBOKPressed)
-    
+
     self.LE_MeshFile.returnPressed.connect(self.meshFileNameChanged)
     self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
     self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
@@ -121,22 +121,22 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
 
   def GenMedFromAny(self, fileIn):
     if fileIn.endswith('.med'):
-        return
+      return
     from salome.smesh import smeshBuilder
     smesh = smeshBuilder.New()
     self.fichierIn=tempfile.mktemp(suffix=".med",prefix="ForMMG_")
     if os.path.exists(self.fichierIn):
-        os.remove(self.fichierIn)
+      os.remove(self.fichierIn)
 
     ext = os.path.splitext(fileIn)[-1]
     if ext == '.mesh' or ext == '.meshb':
-        TmpMesh = smesh.CreateMeshesFromGMF(fileIn)[0]
+      TmpMesh = smesh.CreateMeshesFromGMF(fileIn)[0]
     elif ext == '.cgns':
-        TmpMesh = smesh.CreateMeshesFromCGNS(fileIn)[0][0]
+      TmpMesh = smesh.CreateMeshesFromCGNS(fileIn)[0][0]
     elif ext == '.stl':
-        TmpMesh = smesh.CreateMeshesFromSTL(fileIn)
+      TmpMesh = smesh.CreateMeshesFromSTL(fileIn)
     elif ext == '.unv':
-        TmpMesh = smesh.CreateMeshesFromUNV(fileIn)
+      TmpMesh = smesh.CreateMeshesFromUNV(fileIn)
     TmpMesh.ExportMED(self.fichierIn, autoDimension=True)
     smesh.RemoveMesh(TmpMesh)
     """
@@ -145,21 +145,25 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     """
 
   def GenMeshFromMed(self):
+    if self.__selectedMesh is None:
+      from salome.smesh import smeshBuilder
+      smesh = smeshBuilder.New()
+      self.__selectedMesh = smesh.CreateMeshesFromMED(self.fichierIn)[0][0]
     self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
     if os.path.exists(self.fichierIn):
-        os.remove(self.fichierIn)
+      os.remove(self.fichierIn)
 
     if self.__selectedMesh is not None:
-        if str(type(self.__selectedMesh)) == "<class 'salome.smesh.smeshBuilder.Mesh'>":
-            self.__selectedMesh.ExportGMF(self.fichierIn)
-        else:
-            self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
+      if str(type(self.__selectedMesh)) == "<class 'salome.smesh.smeshBuilder.Mesh'>":
+        self.__selectedMesh.ExportGMF(self.fichierIn)
+      else:
+        self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
     else:
-        QMessageBox.critical(self, "Mesh", "internal error")
+      QMessageBox.critical(self, "Mesh", "internal error")
 
   def GetLabelEvent(self, event):
-      if event.button() == Qt.LeftButton:
-          self.showInfo()
+    if event.button() == Qt.LeftButton:
+      self.showInfo()
 
   def showInfo(self):
     title = "How to use the sandbox with "
@@ -230,14 +234,14 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
       message+="""
 -optimLES    enable skewness improvement (for LES computations)
 """
-    
+
     message+="""
 **  Parameters for advanced users
 -nosizreq       disable setting of required edge sizes over required
                         vertices.
 -hgradreq  val  control gradation from required entities toward
                         others"""
-    
+
     QMessageBox.about(None, title, message)
 
 
@@ -252,52 +256,50 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
       self.label_Remesher.setText(_translate("MyPlugDialog", "This remesher handles tetrahedral volume meshes. It performs surface and volume modifications."))
 
   def RepairBeforeComputeStateChanged(self, state):
-      if state == 2: # Checked
-          self.CB_RepairOnly.setChecked(False)
-          self.CB_RepairOnly.setDisabled(True)
+    if state == 2: # Checked
+      self.CB_RepairOnly.setChecked(False)
+      self.CB_RepairOnly.setDisabled(True)
 
-          self.CB_GenRepair.setDisabled(False)
-          #self.CB_GenRepair.setChecked(False)
-      else:
-          #self.CB_RepairOnly.setChecked(False)
-          self.CB_RepairOnly.setDisabled(False)
+      self.CB_GenRepair.setDisabled(False)
+    else:
+      self.CB_RepairOnly.setDisabled(False)
 
-          self.CB_GenRepair.setChecked(False)
-          self.CB_GenRepair.setDisabled(True)
+      self.CB_GenRepair.setChecked(False)
+      self.CB_GenRepair.setDisabled(True)
 
   def RepairOnlyStateChanged(self, state):
-      if state == 2: # Checked
-          self.CB_RepairBeforeCompute.setChecked(False)
-          self.CB_RepairBeforeCompute.setDisabled(True)
+    if state == 2: # Checked
+      self.CB_RepairBeforeCompute.setChecked(False)
+      self.CB_RepairBeforeCompute.setDisabled(True)
 
-          self.CB_GenRepair.setChecked(False)
-          self.CB_GenRepair.setDisabled(True)
-      else:
-          self.CB_RepairBeforeCompute.setChecked(True)
-          self.CB_RepairBeforeCompute.setDisabled(False)
+      self.CB_GenRepair.setChecked(False)
+      self.CB_GenRepair.setDisabled(True)
+    else:
+      self.CB_RepairBeforeCompute.setChecked(True)
+      self.CB_RepairBeforeCompute.setDisabled(False)
 
-          self.CB_GenRepair.setChecked(False)
-          self.CB_GenRepair.setDisabled(False)
+      self.CB_GenRepair.setChecked(False)
+      self.CB_GenRepair.setDisabled(False)
 
   def GenRepairStateChanged(self, state):
-      if state == 2: # Checked
-          self.CB_RepairBeforeCompute.setChecked(True)
-          self.CB_RepairBeforeCompute.setDisabled(True)
+    if state == 2: # Checked
+      self.CB_RepairBeforeCompute.setChecked(True)
+      self.CB_RepairBeforeCompute.setDisabled(True)
 
-          self.CB_RepairOnly.setChecked(False)
-          self.CB_RepairOnly.setDisabled(True)
-      else:
-          self.CB_RepairBeforeCompute.setChecked(True)
-          self.CB_RepairBeforeCompute.setDisabled(False)
+      self.CB_RepairOnly.setChecked(False)
+      self.CB_RepairOnly.setDisabled(True)
+    else:
+      self.CB_RepairBeforeCompute.setChecked(True)
+      self.CB_RepairBeforeCompute.setDisabled(False)
 
-          self.CB_RepairOnly.setChecked(False)
-          self.CB_RepairOnly.setDisabled(False)
+      self.CB_RepairOnly.setChecked(False)
+      self.CB_RepairOnly.setDisabled(False)
 
   def updateHmaxValue(self):
-      self.SP_Hmax.setMinimum(self.SP_Hmin.value())
+    self.SP_Hmax.setMinimum(self.SP_Hmin.value())
 
   def updateHminValue(self):
-      self.SP_Hmin.setMaximum(self.SP_Hmax.value())
+    self.SP_Hmin.setMaximum(self.SP_Hmax.value())
 
   def PBPlusPressed(self):
     for elt in self.sandboxes:
@@ -370,7 +372,7 @@ Default Values' button.
       if self.values.SelectedObject is None:
         self.values.SelectedObject = self.values.study.FindObjectByName(self.values.MeshName, 'SMESH')[-1]
       self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
-      
+
     self.numRepair+=1
     self.values.AnalysisAndRepair(self.CB_GenRepair.isChecked() or self.CB_RepairOnly.isChecked())
 
@@ -378,12 +380,12 @@ Default Values' button.
     if self.fichierIn=="" and self.MeshIn=="":
       QMessageBox.critical(self, "Mesh", "select an input mesh")
       return False
-    if not self.CB_RepairBeforeCompute.isChecked() and not self.CB_RepairOnly.isChecked():
-      QMessageBox.warning(self, "Compute", "No actions triggered. Please set one in Advanced Remeshing Options.")
-      return False
 
-    if self.isFile and os.path.splitext(self.fichierIn)[-1] != '.med' and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
-      self.GenMedFromAny(self.fichierIn)
+    ext = os.path.splitext(self.fichierIn)[-1]
+    if self.isFile and ext != '.med' \
+        and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
+      if not ((ext == 'mesh' or ext == '.meshb') and not (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked())):
+          self.GenMedFromAny(self.fichierIn)
 
     CpyFichierIn = self.fichierIn
     CpyMeshIn = self.MeshIn
@@ -396,19 +398,24 @@ Default Values' button.
           self.values = Values(self.MeshIn, 0, self.currentName)
       self.Repair()
       if not self.CB_GenRepair.isChecked() and not self.CB_RepairOnly.isChecked():
-          self.numRepair-=1
-      self.MeshIn = self.values.CpyName
-      self.fichierIn=""
-      self.__selectedMesh = self.values.CpyMesh
+        self.numRepair-=1
     if not self.CB_RepairOnly.isChecked():
+      ext = os.path.splitext(self.fichierIn)[-1]
+      if self.fichierIn != "":
+        if ext == '.med':
+          self.GenMeshFromMed()
+        elif ext != '.mesh' and ext != '.meshb':
+          self.GenMedFromAny(self.fichierIn)
+          self.GenMeshFromMed()
+        self.__selectedMesh = None
       if not(self.PrepareLigneCommande()):
         #warning done yet
         #QMessageBox.warning(self, "Compute", "Command not found")
         return False
-        
+
       self.maFenetre=MyViewText(self,self.commande)
       if not self.CB_GenRepair.isChecked() and self.values is not None:
-          self.values.DeleteMesh()
+        self.values.DeleteMesh()
 
     self.fichierIn = CpyFichierIn
     self.MeshIn = CpyMeshIn
@@ -422,7 +429,7 @@ Default Values' button.
     from salome.kernel import studyedit
     from salome.smesh import smeshBuilder
     smesh = smeshBuilder.New()
-    
+
     if not os.path.isfile(self.fichierOut):
       QMessageBox.warning(self, "Compute", "Result file "+self.fichierOut+" not found")
 
@@ -436,9 +443,9 @@ Default Values' button.
     initialMeshObject=None
     if name=="":
       if self.MeshIn =="":
-          a = re.sub(r'_\d*$', '', str(self.fichierIn))
+        a = re.sub(r'_\d*$', '', str(self.fichierIn))
       else: # Repaired
-          a = re.sub(r'_\d*$', '', str(self.MeshIn))
+        a = re.sub(r'_\d*$', '', str(self.MeshIn))
       name=os.path.basename(os.path.splitext(a)[0])
       initialMeshFile=a
 
@@ -453,7 +460,7 @@ Default Values' button.
     moduleEntry=self.editor.findOrCreateComponent("SMESH","SMESH")
     HypReMeshEntry = self.editor.findOrCreateItem(
         moduleEntry, name = "Plugins Hypotheses", icon="mesh_tree_hypo.png") #, comment = "HypoForRemeshing" )
-    
+
     monStudyBuilder=maStudy.NewBuilder()
     monStudyBuilder.NewCommand()
     newStudyIter=monStudyBuilder.NewObject(HypReMeshEntry)
@@ -572,7 +579,7 @@ Default Values' button.
     return
 
   def prepareFichier(self):
-      self.GenMeshFromMed()
+    self.GenMeshFromMed()
 
   def PrepareLigneCommande(self):
     if self.fichierIn=="" and self.MeshIn=="":
@@ -586,19 +593,19 @@ Default Values' button.
     self.commande=""
     selected_index = self.COB_Remesher.currentIndex()
     if selected_index == REMESHER_DICT['MMGS']:
-        self.commande = "mmgs_O3"
+      self.commande = "mmgs_O3"
     elif selected_index == REMESHER_DICT['MMG2D']:
-        self.commande = "mmg2d_O3"
+      self.commande = "mmg2d_O3"
     elif selected_index == REMESHER_DICT['MMG3D']:
-        self.commande = "mmg3d_O3"
+      self.commande = "mmg3d_O3"
     else:
-        self.commande = "mmgs_O3"
+      self.commande = "mmgs_O3"
 
     deb=os.path.splitext(self.fichierIn)
     self.fichierOut=deb[0] + "_output.mesh"
     
     for elt in self.sandboxes:
-        self.commande+=' ' + elt[0].text() + ' ' + elt[1].text()
+      self.commande+=' ' + elt[0].text() + ' ' + elt[1].text()
     
     if not self.CB_InsertEdge.isChecked() : self.commande+=" -noinsert"
     if not self.CB_SwapEdge.isChecked()  : self.commande+=" -noswap"
@@ -617,27 +624,29 @@ Default Values' button.
 
   def clean(self):
     if self.values is None and self.currentName != "" and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
-        if self.fichierIn != "":
-            cpy = self.fichierIn
-            self.GenMedFromAny(self.fichierIn)
-            self.values = Values(self.fichierIn, 0, self.currentName)
-            self.fichierIn = cpy
-        elif self.MeshIn != "":
-            self.values = Values(self.MeshIn, 0, self.currentName)
+      if self.fichierIn != "":
+        cpy = self.fichierIn
+        self.GenMedFromAny(self.fichierIn)
+        self.values = Values(self.fichierIn, 0, self.currentName)
+        self.fichierIn = cpy
+      elif self.MeshIn != "":
+        self.values = Values(self.MeshIn, 0, self.currentName)
+
     if self.values is not None:
-        self.values.ComputeNewDefaultValues()
-        self.SP_Geomapp.setProperty("value", self.values.geomapp)
-        self.SP_Ridge.setProperty("value", self.values.ridge)
-        self.SP_Gradation.setProperty("value", self.values.hgrad)
-        self.SP_Hmin.setProperty("value", self.values.hmin)
-        self.SP_Hmax.setProperty("value", self.values.hmax)
-        self.values.DeleteMesh()
+      self.values.ComputeNewDefaultValues()
+      self.SP_Geomapp.setProperty("value", self.values.geomapp)
+      self.SP_Ridge.setProperty("value", self.values.ridge)
+      self.SP_Gradation.setProperty("value", self.values.hgrad)
+      self.SP_Hmin.setProperty("value", self.values.hmin)
+      self.SP_Hmax.setProperty("value", self.values.hmax)
+      self.values.DeleteMesh()
+
     else: # No file provided, default from MMG
-        self.SP_Geomapp.setProperty("value", 0.01)
-        self.SP_Ridge.setProperty("value", 45.0)
-        self.SP_Gradation.setProperty("value", 1.3)
-        self.SP_Hmin.setProperty("value", 0.01)
-        self.SP_Hmax.setProperty("value", 10)
+      self.SP_Geomapp.setProperty("value", 0.01)
+      self.SP_Ridge.setProperty("value", 45.0)
+      self.SP_Gradation.setProperty("value", 1.3)
+      self.SP_Hmin.setProperty("value", 0.01)
+      self.SP_Hmax.setProperty("value", 10)
     self.values = None
     self.CB_InsertEdge.setChecked(True)
     self.CB_MoveEdge.setChecked(True)
@@ -650,9 +659,9 @@ Default Values' button.
     from PyQt5 import QtCore, QtGui, QtWidgets
     _translate = QtCore.QCoreApplication.translate
     for i in reversed(range(self.gridLayout_5.count())):
-        widget = self.gridLayout_5.takeAt(i).widget()
-        if widget is not None:
-            widget.setParent(None)
+      widget = self.gridLayout_5.takeAt(i).widget()
+      if widget is not None:
+        widget.setParent(None)
 
     self.LE_SandboxR_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxR_1.setMinimumSize(QtCore.QSize(0, 30))
@@ -689,7 +698,7 @@ Default Values' button.
     self.LE_SandboxR_1.setText("")
     self.sandboxes = [(self.LE_SandboxL_1, self.LE_SandboxR_1)]
 
-    #self.PBMeshSmeshPressed() #do not that! problem if done in load surfopt hypo from object browser 
+    #self.PBMeshSmeshPressed() #do not that! problem if done in load surfopt hypo from object browser
     self.TWOptions.setCurrentIndex(0) # Reset current active tab to the first tab
 
 __dialog=None

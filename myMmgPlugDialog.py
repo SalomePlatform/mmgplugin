@@ -145,10 +145,12 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     """
 
   def GenMeshFromMed(self):
+    create_mesh = False
     if self.__selectedMesh is None:
       from salome.smesh import smeshBuilder
       smesh = smeshBuilder.New()
       self.__selectedMesh = smesh.CreateMeshesFromMED(self.fichierIn)[0][0]
+      create_mesh = True
     self.fichierIn=tempfile.mktemp(suffix=".mesh",prefix="ForMMG_")
     if os.path.exists(self.fichierIn):
       os.remove(self.fichierIn)
@@ -160,6 +162,8 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
         self.__selectedMesh.ExportGMF(self.__selectedMesh, self.fichierIn, True)
     else:
       QMessageBox.critical(self, "Mesh", "internal error")
+    if create_mesh:
+        smesh.RemoveMesh(self.__selectedMesh)
 
   def GetLabelEvent(self, event):
     if event.button() == Qt.LeftButton:
@@ -392,6 +396,7 @@ Default Values' button.
     CpySelectedMesh = self.__selectedMesh
     if (self.CB_RepairBeforeCompute.isChecked() or self.CB_RepairOnly.isChecked()) and self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
       if self.values is None:
+        sys.stderr.write(self.fichierIn + ' | ' + self.currentName + '\n')
         if self.fichierIn != "":
           self.values = Values(self.fichierIn, 0, self.currentName)
         else:
@@ -408,13 +413,14 @@ Default Values' button.
           self.GenMedFromAny(self.fichierIn)
           self.GenMeshFromMed()
         self.__selectedMesh = None
+
       if not(self.PrepareLigneCommande()):
         #warning done yet
         #QMessageBox.warning(self, "Compute", "Command not found")
         return False
 
       self.maFenetre=MyViewText(self,self.commande)
-      if not self.CB_GenRepair.isChecked() and self.values is not None:
+      if (not self.CB_GenRepair.isChecked()) and self.values is not None:
         self.values.DeleteMesh()
 
     self.fichierIn = CpyFichierIn

@@ -80,8 +80,8 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.SP_Gradation.setMaximum(sys.float_info.max)
     self.SP_Hmin.setMinimum(10**-14)
     self.SP_Hmax.setMinimum(10**-14)
-    self.SP_Hmin.setDecimals(14)
-    self.SP_Hmax.setDecimals(14)
+    self.SP_Hmin.setDecimals(8)
+    self.SP_Hmax.setDecimals(8)
     self.updateHmaxValue()
     self.updateHminValue()
 
@@ -126,15 +126,9 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.SP_Hmax.valueChanged.connect(self.UpdateHmaxDecimals)
 
   def UpdateHminDecimals(self, value):
-    parts = str(value).split('.')
-    decimals = len(parts[1]) + 1 if len(parts) > 1 else 1
-    self.SP_Hmin.setDecimals(min(decimals, 14)) # Max precision
     self.SP_Hmin.lineEdit().setText(str(value).rstrip('0').rstrip('.') if '.' in str(value) else str(value))
 
   def UpdateHmaxDecimals(self, value):
-    parts = str(value).split('.')
-    decimals = len(parts[1]) + 1 if len(parts) > 1 else 1
-    self.SP_Hmax.setDecimals(min(decimals, 14)) # Max precision
     self.SP_Hmax.lineEdit().setText(str(value).rstrip('0').rstrip('.') if '.' in str(value) else str(value))
 
   def GenMedFromAny(self, fileIn):

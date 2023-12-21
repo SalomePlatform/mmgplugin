@@ -78,7 +78,10 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.SP_Hmax.setMaximum(sys.float_info.max)
     self.SP_Geomapp.setMaximum(sys.float_info.max)
     self.SP_Gradation.setMaximum(sys.float_info.max)
-    self.SP_Ridge.setMaximum(180)
+    self.SP_Hmin.setMinimum(10**-14)
+    self.SP_Hmax.setMinimum(10**-14)
+    self.SP_Hmin.setDecimals(8)
+    self.SP_Hmax.setDecimals(8)
     self.updateHmaxValue()
     self.updateHminValue()
 
@@ -103,7 +106,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
 
     self.LE_MeshFile.returnPressed.connect(self.meshFileNameChanged)
     self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
-    self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
     self.PB_Plus.clicked.connect(self.PBPlusPressed)
@@ -118,6 +120,15 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.COB_Remesher.currentIndexChanged.connect(self.DisplayRemesherLabel)
 
     self.label_info.mouseReleaseEvent = self.GetLabelEvent
+
+    self.SP_Hmin.valueChanged.connect(self.UpdateHminDecimals)
+    self.SP_Hmax.valueChanged.connect(self.UpdateHmaxDecimals)
+
+  def UpdateHminDecimals(self, value):
+    self.SP_Hmin.lineEdit().setText(str(value).rstrip('0').rstrip('.') if '.' in str(value) else str(value))
+
+  def UpdateHmaxDecimals(self, value):
+    self.SP_Hmax.lineEdit().setText(str(value).rstrip('0').rstrip('.') if '.' in str(value) else str(value))
 
   def GenMedFromAny(self, fileIn):
     if fileIn.endswith('.med'):
@@ -498,7 +509,6 @@ Default Values' button.
     text+="MoveEdge="+str(self.CB_MoveEdge.isChecked())+separator
     text+="InsertEdge="+str(self.CB_InsertEdge.isChecked())+separator
     text+="GeometricalApproximation="+str(self.SP_Geomapp.value())+separator
-    text+="RidgeAngle="+str(self.SP_Ridge.value())+separator
     text+="Hmin="+str(self.SP_Hmin.value())+separator
     text+="Hmax="+str(self.SP_Hmax.value())+separator
     text+="MeshGradation="+str(self.SP_Gradation.value())+separator
@@ -616,7 +626,6 @@ Default Values' button.
     if not self.CB_SwapEdge.isChecked()  : self.commande+=" -noswap"
     if not self.CB_MoveEdge.isChecked()  : self.commande+=" -nomove"
     if self.SP_Geomapp.value() != 0.01 : self.commande+=" -hausd %f"%self.SP_Geomapp.value()
-    if self.SP_Ridge.value() != 45.0  : self.commande+=" -ar %f"%self.SP_Ridge.value()
     self.commande+=" -hmin %f"   %self.SP_Hmin.value()
     self.commande+=" -hmax %f"   %self.SP_Hmax.value()
     if self.SP_Gradation.value() != 1.3   : self.commande+=" -hgrad %f"  %self.SP_Gradation.value()
@@ -640,7 +649,6 @@ Default Values' button.
     if self.values is not None:
       self.values.ComputeNewDefaultValues()
       self.SP_Geomapp.setProperty("value", self.values.geomapp)
-      self.SP_Ridge.setProperty("value", self.values.ridge)
       self.SP_Gradation.setProperty("value", self.values.hgrad)
       self.SP_Hmin.setProperty("value", self.values.hmin)
       self.SP_Hmax.setProperty("value", self.values.hmax)
@@ -648,7 +656,6 @@ Default Values' button.
 
     else: # No file provided, default from MMG
       self.SP_Geomapp.setProperty("value", 0.01)
-      self.SP_Ridge.setProperty("value", 45.0)
       self.SP_Gradation.setProperty("value", 1.3)
       self.SP_Hmin.setProperty("value", 0.01)
       self.SP_Hmax.setProperty("value", 10)
@@ -705,6 +712,10 @@ Default Values' button.
 
     #self.PBMeshSmeshPressed() #do not that! problem if done in load surfopt hypo from object browser
     self.TWOptions.setCurrentIndex(0) # Reset current active tab to the first tab
+    value = self.SP_Hmin.value()
+    self.UpdateHminDecimals(value)
+    value = self.SP_Hmax.value()
+    self.UpdateHmaxDecimals(value)
 
 __dialog=None
 def getDialog():

@@ -7,7 +7,6 @@ from math import *
 class Values():
   def __init__(self, MeshName, num, currentName=""):
     self.geomapp = 0.01
-    self.ridge = 45
     self.hmin = 0.01
     self.hmax = 10
     self.hgrad = 1.3

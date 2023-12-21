@@ -106,7 +106,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
 
     self.LE_MeshFile.returnPressed.connect(self.meshFileNameChanged)
     self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
-    self.LE_MeshSmesh.returnPressed.connect(self.meshSmeshNameChanged)
     self.PB_MeshFile.clicked.connect(self.PBMeshFilePressed)
     self.PB_MeshSmesh.clicked.connect(self.PBMeshSmeshPressed)
     self.PB_Plus.clicked.connect(self.PBPlusPressed)

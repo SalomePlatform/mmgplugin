@@ -29,12 +29,12 @@ make
 $SALOME_ROOT_DIR/salome context
 pip install meshio
 cd $SALOME_ROOT_DIR/BINARIES[...]
-wget https://github.com/MmgTools/mmg/releases/download/v5.6.0/mmg-5.6.0-Linux-4.4.0-170-generic-appli.tar.gz]
+wget https://github.com/MmgTools/mmg/releases/download/v5.6.0/mmg-5.6.0-Linux-4.4.0-170-generic-appli.tar.gz
 tar -xvf mmg-5.6.0-Linux-4.4.0-170-generic-appli.tar.gz
 mv bin mmg
-chmod +x mmg/*
 export PATH=$PWD/mmg:$PATH
 ```
+You can test if mmg is correctly installed by running `mmgs_O3 -h`
 
 How to use ?
 =======

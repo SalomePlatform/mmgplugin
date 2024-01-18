@@ -18,6 +18,19 @@ To try the plugin locally, follow these steps:
 	   salome_pluginsmanager.logger.info('ERROR: MMG plug-in is unavailable: {}'.format(e))
 	   pass
 ```
+3. Compilation
+```
+cd $SMESH_ROOT_DIR/share/salome/plugins/smesh/mmgplugin
+make
+```
+
+5. Dependencies:
+```
+$SALOME_ROOT_DIR/salome context
+pip install meshio
+```
+Download the mmg binaries (link)[https://github.com/MmgTools/mmg/releases/download/v5.6.0/mmg-5.6.0-Darwin-17.6.0-appli.tar.gz]
+untar it and put the path of the binaries in your path vraiable
 
 How to use ?
 =======

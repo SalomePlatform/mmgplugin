@@ -6,7 +6,7 @@ Local Tests
 =======
 To try the plugin locally, follow these steps:
 
-1. Open the file located at `$SMESH_ROOT_DIR/share/salome/plugins/smesh/mmgplugin/smesh_plugins.py`.
+1. Open the file located at `$SMESH_ROOT_DIR/share/salome/plugins/smesh/smesh_plugins.py`.
 
 2. Add the following code to the end of the file:
    

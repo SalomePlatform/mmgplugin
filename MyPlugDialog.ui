@@ -824,7 +824,7 @@ By default, the gradation value is of 1.3</string>
           <string>If set, this will compute for you the intermediate repair mesh when in auto repair mode.</string>
          </property>
          <property name="title">
-          <string>You can set/unset</string>
+          <string>You can set/unset the repairing steps using SALOME tools to prepare your mesh for MMG</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4" columnstretch="10,0">
           <property name="sizeConstraint">

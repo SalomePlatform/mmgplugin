@@ -1,13 +1,18 @@
 mmgplugin
 ======
 
-<img src="https://github.com/SalomePlatform/mmgplugin/assets/52162083/af337c45-1e97-4869-8e03-8d277baf319c" alt="bool" width="500" align="center"/> <img src="https://github.com/SalomePlatform/mmgplugin/assets/52162083/e9160a2b-03b1-4e1a-a187-60d8dbb9a96d" alt="smesh" width="500" align="center"/>
+<p align="center">
+  <img src="https://github.com/SalomePlatform/mmgplugin/assets/52162083/af337c45-1e97-4869-8e03-8d277baf319c" alt="bool" width="400" />
+  <img src="https://github.com/SalomePlatform/mmgplugin/assets/52162083/e9160a2b-03b1-4e1a-a187-60d8dbb9a96d" alt="smesh" width="400" />
+</p>
 
 
 For SALOMEs SMESH module -- which provides an open-source meshing framework for  numerical simulations -- the integration of mesh adaptation capabilities is paramount to enhancing its usability and effectiveness. This mmgplugin, leveraging the powerful MMG library,  brings advanced mesh adaptation cpabilities to SALOME's SMESH module. By seamlessly integrating MMG's robust mesh adaptation algorithms into SALOME, users gain access to state-of-the-art techniques for mesh optimization and refinement. This integration should empower engineers, scientists, and researchers to tackle increasingly complex simulation challenges with confidence, knowing that they have the tools necessary to generate high-quality meshes tailored to their specific needs. 
 
 Local Tests
 =======
+
+
 To try the plugin locally, follow these steps:
 
 1. Open the file located at `$SMESH_ROOT_DIR/share/salome/plugins/smesh/smesh_plugins.py`.

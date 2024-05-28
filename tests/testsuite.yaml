@@ -7,7 +7,6 @@
   hgrad: 1.1
   hmin: 0.1
   hmax: 2
-  ar: 45
   choice:
     - only
   sandbox: []
@@ -21,7 +20,6 @@
   hgrad: 1.3
   hmin: 0.01
   hmax: 1
-  ar: 45
   choice:
     - only
   sandbox:
@@ -39,7 +37,6 @@
   hgrad: 1.3
   hmin: 0.1
   hmax: 1
-  ar: 45
   choice:
     - only
   sandbox: []
@@ -55,7 +52,6 @@
   hgrad: 1.3
   hmin: 0.1
   hmax: 10
-  ar: 70
   choice:
     - auto
     - gen
@@ -70,7 +66,6 @@
   hgrad: 1.3
   hmin: 0.01
   hmax: 1
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -84,7 +79,6 @@
   hgrad: 1.2
   hmin: 0.001
   hmax: 1
-  ar: 45
   choice:
     - auto
   sandbox:
@@ -102,7 +96,6 @@
   hgrad: 1.2
   hmin: 0.001
   hmax: 1
-  ar: 45
   choice:
     - auto
   sandbox:
@@ -120,7 +113,6 @@
   hgrad: 1.2
   hmin: 0.001
   hmax: 1
-  ar: 90
   choice:
     - only
   sandbox: []
@@ -134,7 +126,6 @@
   hgrad: 1.2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -148,7 +139,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -162,7 +152,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -176,7 +165,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -190,7 +178,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -204,7 +191,6 @@
   hgrad: 1.3
   hmin: 0.01
   hmax: 1
-  ar: 45
   choice:
     - auto
     - gen
@@ -221,7 +207,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -235,7 +220,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -249,7 +233,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -263,7 +246,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -277,7 +259,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -291,7 +272,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -305,7 +285,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -319,7 +298,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -333,7 +311,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -347,7 +324,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -361,7 +337,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -375,7 +350,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -389,7 +363,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -403,7 +376,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
   sandbox: []
@@ -417,7 +389,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - only
   sandbox: []
@@ -431,7 +402,6 @@
   hgrad: 2
   hmin: 0.1
   hmax: 10
-  ar: 45
   choice:
     - auto
     - gen

@@ -17,7 +17,7 @@ TWO_D_PATH = os.path.join(ROOT_PATH, '2D')
 GEN_PATH = os.path.join(ROOT_PATH, 'gen_surface')
 
 class Test:
-    def __init__(self, filename, swap, insert, move, hausd, hgrad, hmin, hmax, ar, choice, sandbox, default):
+    def __init__(self, filename, swap, insert, move, hausd, hgrad, hmin, hmax, choice, sandbox, default):
         self.filename = filename
         self.swap = swap
         self.insert = insert
@@ -26,7 +26,6 @@ class Test:
         self.hgrad = hgrad
         self.hmin = hmin
         self.hmax = hmax
-        self.ar = ar
         self.choice = choice
         self.sandbox = sandbox
         self.default = default
@@ -75,7 +74,6 @@ def check_ok(mesh, test, mesh_type):
     dialog.CB_MoveEdge.setChecked(test.move)
 
     dialog.SP_Geomapp.setProperty("value", test.hausd)
-    dialog.SP_Ridge.setProperty("value", test.ar)
     dialog.SP_Gradation.setProperty("value", test.hgrad)
     dialog.SP_Hmin.setProperty("value", test.hmin)
     dialog.SP_Hmax.setProperty("value", test.hmax)

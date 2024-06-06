@@ -209,9 +209,9 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
 -hmax   val  maximal mesh size
 -hmin   val  minimal mesh size
 -hsiz   val  constant mesh size
--rmc   [val] enable the removal of componants whose volume
+-rmc   [val] enable the removal of components whose volume
                     fraction is less than val (1e-5 if not given)
-                    of the mesh volume (ls mode).
+                    of the mesh volume (level-set mode only).
 """
     if self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
       title+="MMGS"
@@ -224,25 +224,25 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
                     of the same reference.
 -3dMedit val read and write for gmsh visu: output only if val=1,
                     input and output if val=2, input if val=3
--nofem       do not force Mmg to create a finite element mesh 
+-nofem       do not force Mmg to create a finite element mesh
 -nosurf      no surface modifications
 """
     else:
       title+="MMG3D"
       message+="""-opnbdy      preserve input triangles at the interface of two domains
                     of the same reference.
--octree val  specify the max number of points per octree cell 
--rn [n]      turn on or off the renumbering using SCOTCH [1/0] 
--nofem       do not force Mmg to create a finite element mesh 
+-octree val  specify the max number of points per octree cell
+-rn [n]      turn on or off the renumbering using SCOTCH [1/0]
+-nofem       do not force Mmg to create a finite element mesh
 -nosurf      no surface modifications
 """
 
     message+="""
--noinsert    no point insertion/deletion 
+-noinsert    no point insertion/deletion
 -nomove      no point relocation
 -noswap      no edge or face flipping
--nreg        normal regul.
--xreg        vertex regul.
+-nreg   val  normal regularization on(val=1) or off(val=0).
+-xreg        regularization of boundary point positions
 -nsd    val  save the subdomain number val (0==all subdomain)
 -optim       mesh optimization
 """
@@ -267,7 +267,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     if self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
       self.label_Remesher.setText(_translate("MyPlugDialog", "This remesher handles triangular surface meshes in 3D."))
     elif self.COB_Remesher.currentIndex() == REMESHER_DICT['MMG2D']:
-      self.label_Remesher.setText(_translate("MyPlugDialog", "This remesher handles two-dimensionnal triangular meshes."))
+      self.label_Remesher.setText(_translate("MyPlugDialog", "This remesher handles two-dimensional triangular meshes."))
     else:
       self.label_Remesher.setText(_translate("MyPlugDialog", "This remesher handles tetrahedral volume meshes. It performs surface and volume modifications."))
 
@@ -344,7 +344,7 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
     self.sandboxes.append((self.LE_SandboxL, self.LE_SandboxR))
 
   def PBHelpPressed(self):
-    QMessageBox.about(None, "About this MMG remeshing tool",
+    QMessageBox.about(self, "About this MMG remeshing tool",
             """
                     Adapt your mesh with MMG
                     -------------------------------------------
@@ -355,7 +355,7 @@ bad mesh (double elements or free elements).
 
 By default, your mesh will be prepared for MMG.
 You can find the options to disable it or
-explicitely generate the repaired mesh in the
+explicitly generate the repaired mesh in the
 'Advanced Remeshing Options' panel.
 By pressing the 'Remesh' button, your mesh will
 be adapted by MMG with your selected parameters.
@@ -483,9 +483,9 @@ Default Values' button.
     newStudyIter=monStudyBuilder.NewObject(HypReMeshEntry)
     self.editor.setAttributeValue(newStudyIter, "AttributeName", "MMG Parameters_"+str(self.num))
     self.editor.setAttributeValue(newStudyIter, "AttributeComment", self.getResumeData(separator=" ; "))
-    
+
     SOMesh=maStudy.FindObjectByName(meshname ,"SMESH")[0]
-    
+
     if initialMeshFile!=None:
       newStudyFileName=monStudyBuilder.NewObject(SOMesh)
       self.editor.setAttributeValue(newStudyFileName, "AttributeName", "meshFile")
@@ -578,7 +578,7 @@ Default Values' button.
   def meshFileNameChanged(self):
     #FIXME Change in name Gen new med
     self.fichierIn=str(self.LE_MeshFile.text())
-    if os.path.exists(self.fichierIn): 
+    if os.path.exists(self.fichierIn):
       self.__selectedMesh=None
       self.MeshIn=""
       self.LE_MeshSmesh.setText("")
@@ -605,7 +605,7 @@ Default Values' button.
     if not (os.path.isfile(self.fichierIn)):
       QMessageBox.critical(self, "File", "unable to read GMF Mesh in "+str(self.fichierIn))
       return False
-    
+
     self.commande=""
     selected_index = self.COB_Remesher.currentIndex()
     if selected_index == REMESHER_DICT['MMGS']:
@@ -619,10 +619,10 @@ Default Values' button.
 
     deb=os.path.splitext(self.fichierIn)
     self.fichierOut=deb[0] + "_output.mesh"
-    
+
     for elt in self.sandboxes:
       self.commande+=' ' + elt[0].text() + ' ' + elt[1].text()
-    
+
     if not self.CB_InsertEdge.isChecked() : self.commande+=" -noinsert"
     if not self.CB_SwapEdge.isChecked()  : self.commande+=" -noswap"
     if not self.CB_MoveEdge.isChecked()  : self.commande+=" -nomove"

@@ -3,7 +3,7 @@ MESH_FILES := $(PY_FILES:.py=.mesh)
 
 all:
 	mkdir -p archive_meshes
-	../../../../../../../../../salome shell -l -script MakeMesh.py
+	./../../../../../../salome shell -l -script MakeMesh.py
 
 clean:
 	rm $(MESH_FILES)

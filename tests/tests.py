@@ -1,7 +1,7 @@
 import os
 import subprocess
 import sys
-import yaml
+import json  # Changed from yaml to json
 
 sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh", "mmgplugin"))
 sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh"))
@@ -26,21 +26,15 @@ class Test:
         self.hgrad = hgrad
         self.hmin = hmin
         self.hmax = hmax
-        self.choice = choice
-        self.sandbox = sandbox
+        self.choice = choice if choice else []
+        self.sandbox = [{'left': '-' + elt['left'], 'right': elt['right']} for elt in sandbox] if sandbox else []
         self.default = default
-        if self.sandbox is None:
-            self.sandbox = []
-        else:
-            self.sandbox = [{'left' : '-' + elt['left'], 'right' : elt['right']} for elt in self.sandbox]
-        if self.choice is None:
-            self.choice = []
 
 def perform_ls(path=SURFACE_PATH):
-  """perform a simple ls of the path parameter, return a list of files"""
-  with subprocess.Popen(["ls", path], stderr = subprocess.PIPE, stdout=subprocess.PIPE, text=True) as ls_process:
-    output, _ = ls_process.communicate()
-    return [os.path.join(path, file) for file in output.splitlines()]
+    """Perform a simple ls of the path parameter, return a list of files"""
+    with subprocess.Popen(["ls", path], stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True) as ls_process:
+        output, _ = ls_process.communicate()
+        return [os.path.join(path, file) for file in output.splitlines()]
 
 def check_ok(mesh, test, mesh_type):
     if mesh.endswith('.sol') or mesh.endswith('_output.mesh'):
@@ -50,15 +44,15 @@ def check_ok(mesh, test, mesh_type):
     # Fake PBMeshFilePressed without Qt interface
     ###
     dialog.LE_MeshFile.setText(mesh)
-    dialog.fichierIn=str(mesh)
+    dialog.fichierIn = str(mesh)
     dialog.currentName = os.path.splitext(os.path.basename(dialog.fichierIn))[0]
-    dialog.MeshIn=""
+    dialog.MeshIn = ""
     dialog.LE_MeshSmesh.setText("")
-    dialog.__selectedMesh=None
+    dialog.__selectedMesh = None
     dialog.isFile = True
     ###
 
-    # Set all the parameter to be conform with the yaml
+    # Set all the parameters to be conform with the JSON
     ###
     if mesh_type == 'surface':
         dialog.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMGS'])
@@ -97,7 +91,7 @@ def check_ok(mesh, test, mesh_type):
 
     # Compute Mesh
     ###
-    test = dialog.PBOKPressed()
+    result = dialog.PBOKPressed()
     ###
 
     if dialog.maFenetre is not None:
@@ -108,8 +102,8 @@ def check_ok(mesh, test, mesh_type):
     dialog.PBCancelPressed()
     ###
 
-    result_dict[dialog.currentName] = test
-    return test
+    result_dict[dialog.currentName] = result
+    return result
 
 def pretty_print():
     with open(os.path.join(ROOT_PATH, 'logs.txt'), 'w') as f:
@@ -117,53 +111,25 @@ def pretty_print():
             f.write(key + ': ' + str(value) + '\n')
 
 def main():
-
-    # Load YAML data from a file
-    with open(os.path.join(ROOT_PATH, 'testsuite.yaml'), 'r') as file:
-        data = yaml.load(file, Loader=yaml.FullLoader)
+    # Load JSON data from a file
+    with open(os.path.join(ROOT_PATH, 'testsuite.json'), 'r') as file:
+        data = json.load(file)
 
     print("start testing...")
 
-    ls = perform_ls(SURFACE_PATH)
-    dict_tests = {}
-    for item in data:
-        for path in ls:
-            if item['filename'] == os.path.basename(path):
-                dict_tests[path] = Test(**item)
+    # Simplified the test iteration into a single loop
+    for path, mesh_type in [(SURFACE_PATH, 'surface'), (GEN_PATH, 'surface'), (THREE_D_PATH, '3D'), (TWO_D_PATH, '2D')]:  # Combined all paths and types into a single loop
+        ls = perform_ls(path)
+        dict_tests = {}
+        for item in data:
+            for filepath in ls:
+                if item['filename'] == os.path.basename(filepath):
+                    dict_tests[filepath] = Test(**item)
 
-    for mesh, test in dict_tests.items():
-        check_ok(mesh, test, 'surface')
-
-    ls = perform_ls(GEN_PATH)
-    dict_tests = {}
-    for item in data:
-        for path in ls:
-            if item['filename'] == os.path.basename(path):
-                dict_tests[path] = Test(**item)
-
-    for mesh, test in dict_tests.items():
-        check_ok(mesh, test, 'surface')
-
-    ls = perform_ls(THREE_D_PATH)
-    dict_tests = {}
-    for item in data:
-        for path in ls:
-            if item['filename'] == os.path.basename(path):
-                dict_tests[path] = Test(**item)
-
-    for mesh, test in dict_tests.items():
-        check_ok(mesh, test, '3D')
-
-    ls = perform_ls(TWO_D_PATH)
-    dict_tests = {}
-    for item in data:
-        for path in ls:
-            if item['filename'] == os.path.basename(path):
-                dict_tests[path] = Test(**item)
-
-    for mesh, test in dict_tests.items():
-        check_ok(mesh, test, '2D')
+        for mesh, test in dict_tests.items():
+            check_ok(mesh, test, mesh_type)
 
     pretty_print()
 
 main()
+

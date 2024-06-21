@@ -3,14 +3,14 @@ import subprocess
 import sys
 import json  # Changed from yaml to json
 
-sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh", "mmgplugin"))
+sys.path.append(os.path.join(os.environ["MMGPLUGIN_ROOT_DIR"], "plugins", "mmgplugin"))
 sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh"))
 
 from myMmgPlugDialog import *
 
 result_dict = {}
 
-ROOT_PATH = os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh", "mmgplugin", "tests")
+ROOT_PATH = os.path.join(os.environ["MMGPLUGIN_ROOT_DIR"], "tests")
 SURFACE_PATH = os.path.join(ROOT_PATH, 'surface')
 THREE_D_PATH = os.path.join(ROOT_PATH, '3D')
 TWO_D_PATH = os.path.join(ROOT_PATH, '2D')

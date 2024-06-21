@@ -465,7 +465,7 @@
     "default": false
   },
   {
-    "filename": "union_cube_cone_double_nodes/mesh",
+    "filename": "union_cube_cone_double_nodes.mesh",
     "swap": true,
     "insert": true,
     "move": true,

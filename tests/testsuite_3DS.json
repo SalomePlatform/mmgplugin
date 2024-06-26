@@ -1,0 +1,314 @@
+[
+  {
+    "filename": "tiny_sphere_med.med",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "tiny_sphere_cgns.cgns",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.5,
+    "hgrad": 1.5,
+    "hmin": 0.8,
+    "hmax": 0.8,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [
+       {
+            "left": "hsiz",
+            "right": "0.8"
+        }
+    ],
+    "default": true
+  },
+  {
+    "filename": "tiny_sphere_unv.unv",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 1.5,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "only"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "thinker.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.0100,
+    "hgrad": 1.300,
+    "hmin": 0.00071019,
+    "hmax": 1.42202971,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "union_cube_torus.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "only"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "union_cube_cone_double_nodes.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.5,
+    "hgrad": 1.3,
+    "hmin": 1.5,
+    "hmax": 1.5,
+    "choice": [
+      "auto",
+      "gen"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "union_cube_tori.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "only"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "small_cut_union_sphere_cube_repaired.meshb",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "mechanical.meshb",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.02,
+    "hgrad": 1.5,
+    "hmin": 0.005,
+    "hmax": 10,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "new_thinker.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.005,
+    "hgrad": 1.0,
+    "hmin": 0.1e-5,
+    "hmax": 0.50e-1,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [
+       {
+            "left": "nr",
+            "right": ""
+        }
+    ],
+    "default": false
+  },
+  {
+    "filename": "head_merged.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "ovni.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 1.5,
+    "hmin": 1,
+    "hmax": 2,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "torus_small.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "torus_medium.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "intersection_sphere_cube.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.1,
+    "hgrad": 2,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "only"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "sphere.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.2,
+    "hgrad": 0.5,
+    "hmin": 2.0,
+    "hmax": 4,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "small_sphere.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.2,
+    "hgrad": 2,
+    "hmin": 0.5,
+    "hmax": 10,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "cone_medium.mesh",
+    "swap": true,
+    "insert": false,
+    "move": false,
+    "hausd": 1,
+    "hgrad": 1.3,
+    "hmin": 0.1,
+    "hmax": 10,
+    "choice": [
+      "auto",
+      "gen"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "cube.mesh",
+    "swap": false,
+    "insert": false,
+    "move": false,
+    "hausd": 0.1,
+    "hgrad": 1.3,
+    "hmin": 0.01,
+    "hmax": 1,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "cylinder.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.2,
+    "hgrad": 1.1,
+    "hmin": 2.0,
+    "hmax": 4,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  }
+]

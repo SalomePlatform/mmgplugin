@@ -62,15 +62,19 @@ PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
 
 # --- rules ---
 SET(MMG_INSTALL_PLUGIN "plugins/mmgplugin")
+SET(MMG_INSTALL_TESTS ".")
+SET(MMG_INSTALL_MISC "misc")
 SET(MMG_INSTALL_DOC    "doc")
 SALOME_INSTALL_SCRIPTS("${_plugin_SCRIPTS}" "${MMG_INSTALL_PLUGIN}")
 SALOME_INSTALL_SCRIPTS("${_pyuic_SCRIPTS}" "${MMG_INSTALL_PLUGIN}" TARGET_NAME _target_name_pyuic_py)
 # add dependency of compiled py files on uic files in order
 # to avoid races problems when compiling in parallel
 ADD_DEPENDENCIES(${_target_name_pyuic_py} ${_target_name_pyuic})
-# Install the CMake configuration files:
+# Install the files:
 INSTALL(FILES "${PROJECT_SOURCE_DIR}/README.md" DESTINATION "${MMG_INSTALL_DOC}" )
 SALOME_CONFIGURE_FILE(__init__.py __init__.py INSTALL "${MMG_INSTALL_PLUGIN}")
+# Install the folders:
+INSTALL(DIRECTORY "./tests" DESTINATION "${MMG_INSTALL_TESTS}")
 # check whether the plugin is already registered to SMESH plugins.
 # sadly this is not available as a macro from the SMESH installation
 SET(SALOME_SMESH_INSTALL_PLUGINS share/salome/plugins/smesh CACHE PATH

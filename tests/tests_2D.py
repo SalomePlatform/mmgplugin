@@ -2,19 +2,22 @@ import os
 import subprocess
 import sys
 import json  # Changed from yaml to json
+from PyQt5.QtWidgets import QApplication
 
 sys.path.append(os.path.join(os.environ["MMGPLUGIN_ROOT_DIR"], "plugins", "mmgplugin"))
 sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh"))
 
 from myMmgPlugDialog import *
 
+
+# Initialize QApplication
+#app = QApplication(sys.argv)
+
 result_dict = {}
 
 ROOT_PATH = os.path.join(os.environ["MMGPLUGIN_ROOT_DIR"], "tests")
-SURFACE_PATH = os.path.join(ROOT_PATH, 'surface')
-THREE_D_PATH = os.path.join(ROOT_PATH, '3D')
 TWO_D_PATH = os.path.join(ROOT_PATH, '2D')
-GEN_PATH = os.path.join(ROOT_PATH, 'gen_surface')
+
 
 class Test:
     def __init__(self, filename, swap, insert, move, hausd, hgrad, hmin, hmax, choice, sandbox, default):
@@ -30,7 +33,7 @@ class Test:
         self.sandbox = [{'left': '-' + elt['left'], 'right': elt['right']} for elt in sandbox] if sandbox else []
         self.default = default
 
-def perform_ls(path=SURFACE_PATH):
+def perform_ls(path=TWO_D_PATH):
     """Perform a simple ls of the path parameter, return a list of files"""
     with subprocess.Popen(["ls", path], stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True) as ls_process:
         output, _ = ls_process.communicate()
@@ -54,12 +57,8 @@ def check_ok(mesh, test, mesh_type):
 
     # Set all the parameters to be conform with the JSON
     ###
-    if mesh_type == 'surface':
-        dialog.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMGS'])
-    elif mesh_type == '2D':
+    if mesh_type == '2D':
         dialog.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMG2D'])
-    elif mesh_type == '3D':
-        dialog.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMG3D'])
     else:
         return False
 
@@ -106,19 +105,19 @@ def check_ok(mesh, test, mesh_type):
     return result
 
 def pretty_print():
-    with open(os.path.join(ROOT_PATH, 'logs.txt'), 'w') as f:
+    with open(os.path.join(ROOT_PATH, 'logs_2D.txt'), 'w') as f:
         for key, value in result_dict.items():
             f.write(key + ': ' + str(value) + '\n')
 
 def main():
     # Load JSON data from a file
-    with open(os.path.join(ROOT_PATH, 'testsuite.json'), 'r') as file:
+    with open(os.path.join(ROOT_PATH, 'testsuite_2D.json'), 'r') as file:
         data = json.load(file)
 
-    print("start testing...")
+    print("\nstart 2D testing...\n")
 
     # Simplified the test iteration into a single loop
-    for path, mesh_type in [(SURFACE_PATH, 'surface'), (GEN_PATH, 'surface'), (THREE_D_PATH, '3D'), (TWO_D_PATH, '2D')]:  # Combined all paths and types into a single loop
+    for path, mesh_type in [(TWO_D_PATH, '2D')]:  # Combined all paths and types into a single loop
         ls = perform_ls(path)
         dict_tests = {}
         for item in data:

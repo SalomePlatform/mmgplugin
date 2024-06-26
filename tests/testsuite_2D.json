@@ -1,0 +1,32 @@
+[
+  {
+    "filename": "disk_flat.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.01,
+    "hgrad": 1.1,
+    "hmin": 0.1,
+    "hmax": 2,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  },
+  {
+    "filename": "naca_embedded.mesh",
+    "swap": true,
+    "insert": true,
+    "move": true,
+    "hausd": 0.0005,
+    "hgrad": 1.3,
+    "hmin": 0.01,
+    "hmax": 5,
+    "choice": [
+      "auto"
+    ],
+    "sandbox": [],
+    "default": false
+  }
+]

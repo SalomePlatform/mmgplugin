@@ -75,7 +75,6 @@ INSTALL(FILES "${PROJECT_SOURCE_DIR}/README.md" DESTINATION "${MMG_INSTALL_DOC}"
 SALOME_CONFIGURE_FILE(__init__.py __init__.py INSTALL "${MMG_INSTALL_PLUGIN}")
 # Install the folders:
 INSTALL(DIRECTORY "./tests" DESTINATION "${MMG_INSTALL_TESTS}")
-INSTALL(DIRECTORY "./misc/mesh_data" DESTINATION "${MMG_INSTALL_MISC}")
 # check whether the plugin is already registered to SMESH plugins.
 # sadly this is not available as a macro from the SMESH installation
 SET(SALOME_SMESH_INSTALL_PLUGINS share/salome/plugins/smesh CACHE PATH

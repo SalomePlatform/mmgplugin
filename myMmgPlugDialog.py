@@ -441,8 +441,8 @@ Default Values' button.
     return True
 
   def enregistreResultat(self):
-    import salome
-    import SMESH
+    from salome.kernel import salome
+    from salome.kernel import SMESH
     from salome.kernel import studyedit
     from salome.smesh import smeshBuilder
     smesh = smeshBuilder.New()
@@ -540,7 +540,7 @@ Default Values' button.
 
   def PBMeshSmeshPressed(self):
     from omniORB import CORBA
-    import salome
+    from salome.kernel import salome
     from salome.kernel import studyedit
     from salome.smesh.smeshstudytools import SMeshStudyTools
     from salome.gui import helper as guihelper

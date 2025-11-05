@@ -18,8 +18,8 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
-import SMESH
-import salome
+from salome.kernel import SMESH
+from salome.kernel import salome
 import os
 from salome.smesh import smeshBuilder
 from math import *

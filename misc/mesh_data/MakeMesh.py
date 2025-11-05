@@ -1,6 +1,6 @@
 import os
 import tempfile
-import salome
+from salome.kernel import salome
 import subprocess
 
 ROOT_PATH = '.'
@@ -30,7 +30,7 @@ def load_geometry(input_file):
     try:
         exec(compile(open(input_file, 'rb').read(), input_file, 'exec'))
 
-        import SMESH
+        from salome.kernel import SMESH
         from salome.smesh import smeshBuilder
         smesh = smeshBuilder.New()
 

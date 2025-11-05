@@ -5,10 +5,10 @@
 ###
 
 import sys
-import salome
+from salome.kernel import salome
 
 salome.salome_init()
-import salome_notebook
+from salome.kernel import salome_notebook
 notebook = salome_notebook.NoteBook()
 import os
 sys.path.insert(0, f'{os.environ["PWD"]}/archive_meshes')
@@ -17,10 +17,10 @@ sys.path.insert(0, f'{os.environ["PWD"]}/archive_meshes')
 ### GEOM component
 ###
 
-import GEOM
+from salome.kernel import GEOM
 from salome.geom import geomBuilder
 import math
-import SALOMEDS
+from salome.kernel import SALOMEDS
 
 
 geompy = geomBuilder.New()
@@ -40,7 +40,7 @@ geompy.addToStudy( Cone_1, 'Cone_1' )
 ### SMESH component
 ###
 
-import  SMESH, SALOMEDS
+from salome.kernel import  SMESH, SALOMEDS
 from salome.smesh import smeshBuilder
 
 smesh = smeshBuilder.New()

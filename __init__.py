@@ -19,3 +19,6 @@
 #
 
 __version__ = "@MMGPLUGIN_GIT_SHA1@"
+
+def usePySide():
+  return @MMGPLUGIN_USE_PYSIDE@

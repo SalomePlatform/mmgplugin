@@ -34,6 +34,15 @@ ENDIF()
 # ===========
 SALOME_SETUP_VERSION(1.0)
 
+# Use PySide2/Shiboken2 or PyQt5/SIP5
+# ===================================
+SET (SALOME_USE_PYSIDE $ENV{SALOME_USE_PYSIDE} CACHE BOOL "Use PySide or PyQt")
+IF(SALOME_USE_PYSIDE)
+  SET(MMGGPLUGIN_USE_PYSIDE True)
+ELSE(SALOME_USE_PYSIDE)
+  SET(MMGGPLUGIN_USE_PYSIDE False)
+ENDIF(SALOME_USE_PYSIDE)
+
 SET(SMESH_ROOT_DIR $ENV{SMESH_ROOT_DIR} CACHE PATH "Path to SMESH")
 IF(NOT EXISTS ${SMESH_ROOT_DIR})
   MESSAGE(FATAL_ERROR "SMESH_ROOT_DIR environment variable is missing, please define SMESH_ROOT_DIR")
@@ -42,9 +51,13 @@ ENDIF()
 # Python
 FIND_PACKAGE(SalomePythonInterp REQUIRED)
 FIND_PACKAGE(SalomePythonLibs REQUIRED)
-FIND_PACKAGE(SalomePyQt5 REQUIRED)
-INCLUDE(UsePyQt)
 
+IF(SALOME_USE_PYSIDE)
+  INCLUDE(UsePySide)
+ELSE(SALOME_USE_PYSIDE)
+  FIND_PACKAGE(SalomePyQt5 REQUIRED)
+  INCLUDE(UsePyQt)
+ENDIF(SALOME_USE_PYSIDE)
 SET(_plugin_SCRIPTS
   compute_values.py
   mmgPlug_plugin.py
@@ -58,8 +71,11 @@ SET(_pyuic_FILES
 )
 
 # scripts / pyuic wrappings
-PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
-
+IF(SALOME_USE_PYSIDE)
+  PYSIDE2_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
+ELSE(SALOME_USE_PYSIDE)
+  PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
+ENDIF(SALOME_USE_PYSIDE)
 # --- rules ---
 SET(MMG_INSTALL_PLUGIN "plugins/mmgplugin")
 SET(MMG_INSTALL_TESTS ".")

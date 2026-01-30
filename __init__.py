@@ -21,4 +21,5 @@
 __version__ = "@MMGPLUGIN_GIT_SHA1@"
 
 def usePySide():
-  return @MMGPLUGIN_USE_PYSIDE@
+  import os
+  return 'SALOME_USE_PYSIDE' in os.environ

@@ -28,10 +28,18 @@ import sys
 import platform
 from mmgplugin.MyPlugDialog_ui import Ui_MyPlugDialog
 from mmgplugin.myViewText import MyViewText
-from qtsalome import *
+from mmgplugin import usePySide
+if usePySide:
+  from PySide2.QtWidgets import QWidget, QMessageBox, QLineEdit, QSizePolicy, QSpacerItem, QFileDialog, QLabel
+  from PySide2.QtGui import QPixmap, QIcon
+  from PySide2.QtCore import Qt, QCoreApplication, QSize
+else:
+  from PyQt.Qt import *
+  from PyQt5.QtGui import QPixmap
+  from PyQt5.QtCore import Qt
+
+# https://peps.python.org/pep-0008
 from mmgplugin.compute_values import *
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
 
 verbose = True
 

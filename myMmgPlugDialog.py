@@ -332,12 +332,12 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
         QMessageBox.warning(self, "Sandbox", "There is an empty line.")
         return
     self.NbOptParam+=1
-    self.LE_SandboxL = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxL = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxL.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxL.setObjectName("LE_SandboxL_" + str(self.NbOptParam + 1))
     self.gridLayout_5.addWidget(self.LE_SandboxL, self.NbOptParam + 1, 0, 1, 1)
 
-    self.LE_SandboxR = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxR = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxR.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxR.setObjectName("LE_SandboxR_" + str(self.NbOptParam + 1))
     self.gridLayout_5.addWidget(self.LE_SandboxR, self.NbOptParam + 1, 1, 1, 1)
@@ -683,12 +683,12 @@ Default Values' button.
       if widget is not None:
         widget.setParent(None)
 
-    self.LE_SandboxR_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxR_1 = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxR_1.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxR_1.setObjectName("LE_SandboxR_1")
     self.gridLayout_5.addWidget(self.LE_SandboxR_1, 1, 1, 1, 1)
 
-    self.LE_SandboxL_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxL_1 = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxL_1.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxL_1.setObjectName("LE_SandboxL_1")
     self.gridLayout_5.addWidget(self.LE_SandboxL_1, 1, 0, 1, 1)

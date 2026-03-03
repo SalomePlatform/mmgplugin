@@ -47,12 +47,11 @@ ENDIF()
 FIND_PACKAGE(SalomePythonInterp REQUIRED)
 FIND_PACKAGE(SalomePythonLibs REQUIRED)
 
-IF(SALOME_USE_PYSIDE)
-  INCLUDE(UsePySide)
-ELSE(SALOME_USE_PYSIDE)
-  FIND_PACKAGE(SalomePyQt5 REQUIRED)
-  INCLUDE(UsePyQt)
-ENDIF(SALOME_USE_PYSIDE)
+# Python Qt
+# ===========
+INCLUDE(SalomeQtPythonBindings)
+SALOME_SETUP_QT_PYTHON_BINDINGS()
+
 SET(_plugin_SCRIPTS
   compute_values.py
   mmgPlug_plugin.py
@@ -66,11 +65,8 @@ SET(_pyuic_FILES
 )
 
 # scripts / pyuic wrappings
-IF(SALOME_USE_PYSIDE)
-  PYSIDE2_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
-ELSE(SALOME_USE_PYSIDE)
-  PYQT_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
-ENDIF(SALOME_USE_PYSIDE)
+SALOME_WRAP_UIC(_pyuic_SCRIPTS ${_pyuic_FILES} TARGET_NAME _target_name_pyuic)
+
 # --- rules ---
 SET(MMG_INSTALL_PLUGIN "plugins/mmgplugin")
 SET(MMG_INSTALL_TESTS ".")

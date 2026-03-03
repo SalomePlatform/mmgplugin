@@ -2,7 +2,11 @@ import os
 import subprocess
 import sys
 import json  # Changed from yaml to json
-from PyQt5.QtWidgets import QApplication
+from mmgplugin import usePySide
+if usePySide():
+  from PySide2.QtWidgets import QApplication
+else:
+  from PyQt5.QtWidgets import QApplication
 
 sys.path.append(os.path.join(os.environ["MMGPLUGIN_ROOT_DIR"], "plugins", "mmgplugin"))
 sys.path.append(os.path.join(os.environ["SMESH_ROOT_DIR"], "share", "salome", "plugins", "smesh"))

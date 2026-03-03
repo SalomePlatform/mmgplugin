@@ -29,7 +29,11 @@ def Mmg(context):
   import os
   import subprocess
   import tempfile
-  from qtsalome import QFileDialog, QMessageBox
+  from mmgplugin import usePySide
+  if usePySide():
+    from PySide2.QtWidgets import QFileDialog, QMessageBox
+  else:
+    from PyQt5.Qt import QFileDialog, QMessageBox
   
   import mmgplugin.myMmgPlugDialog as myMmgPlugDialog
   window = myMmgPlugDialog.getDialog()

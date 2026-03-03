@@ -28,10 +28,20 @@ import sys
 import platform
 from mmgplugin.MyPlugDialog_ui import Ui_MyPlugDialog
 from mmgplugin.myViewText import MyViewText
-from qtsalome import *
+from mmgplugin import usePySide
+if usePySide():
+  from PySide2 import QtCore, QtGui, QtWidgets
+  from PySide2.QtWidgets import QWidget, QMessageBox, QLineEdit, QSizePolicy, QSpacerItem, QFileDialog, QLabel
+  from PySide2.QtGui import QPixmap, QIcon
+  from PySide2.QtCore import Qt, QCoreApplication, QSize
+else:
+  from PyQt.Qt import *
+  from PyQt5.QtGui import QPixmap
+  from PyQt5 import QtCore, QtGui, QtWidgets
+  from PyQt5.QtCore import Qt
+
+# https://peps.python.org/pep-0008
 from mmgplugin.compute_values import *
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
 
 verbose = True
 
@@ -262,7 +272,6 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
 
 
   def DisplayRemesherLabel(self):
-    from PyQt5 import QtCore, QtGui, QtWidgets
     _translate = QtCore.QCoreApplication.translate
     if self.COB_Remesher.currentIndex() == REMESHER_DICT['MMGS']:
       self.label_Remesher.setText(_translate("MyPlugDialog", "This remesher handles triangular surface meshes in 3D."))
@@ -323,13 +332,12 @@ class MyMmgPlugDialog(Ui_MyPlugDialog,QWidget):
         QMessageBox.warning(self, "Sandbox", "There is an empty line.")
         return
     self.NbOptParam+=1
-    from PyQt5 import QtCore, QtGui, QtWidgets
-    self.LE_SandboxL = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxL = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxL.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxL.setObjectName("LE_SandboxL_" + str(self.NbOptParam + 1))
     self.gridLayout_5.addWidget(self.LE_SandboxL, self.NbOptParam + 1, 0, 1, 1)
 
-    self.LE_SandboxR = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxR = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxR.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxR.setObjectName("LE_SandboxR_" + str(self.NbOptParam + 1))
     self.gridLayout_5.addWidget(self.LE_SandboxR, self.NbOptParam + 1, 1, 1, 1)
@@ -669,19 +677,18 @@ Default Values' button.
     self.CB_GenRepair.setChecked(False)
     #self.COB_Remesher.setCurrentIndex(REMESHER_DICT['MMGS'])
 
-    from PyQt5 import QtCore, QtGui, QtWidgets
     _translate = QtCore.QCoreApplication.translate
     for i in reversed(range(self.gridLayout_5.count())):
       widget = self.gridLayout_5.takeAt(i).widget()
       if widget is not None:
         widget.setParent(None)
 
-    self.LE_SandboxR_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxR_1 = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxR_1.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxR_1.setObjectName("LE_SandboxR_1")
     self.gridLayout_5.addWidget(self.LE_SandboxR_1, 1, 1, 1, 1)
 
-    self.LE_SandboxL_1 = QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
+    self.LE_SandboxL_1 = QtWidgets.QLineEdit() if usePySide() else QtWidgets.QLineEdit(self.scrollAreaWidgetContents)
     self.LE_SandboxL_1.setMinimumSize(QtCore.QSize(0, 30))
     self.LE_SandboxL_1.setObjectName("LE_SandboxL_1")
     self.gridLayout_5.addWidget(self.LE_SandboxL_1, 1, 0, 1, 1)

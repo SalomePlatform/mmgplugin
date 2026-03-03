@@ -35,7 +35,7 @@ if usePySide():
   from PySide2.QtGui import QPixmap, QIcon
   from PySide2.QtCore import Qt, QCoreApplication, QSize
 else:
-  from PyQt.Qt import *
+  from PyQt5.Qt import *
   from PyQt5.QtGui import QPixmap
   from PyQt5 import QtCore, QtGui, QtWidgets
   from PyQt5.QtCore import Qt

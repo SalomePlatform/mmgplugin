@@ -388,17 +388,20 @@ Default Values' button.
       self.values.DeleteMesh()
 
     self.values.CpyName = re.sub(r'\d*$', '', self.values.CpyName) + str(self.numRepair)
+    try:
+      if self.isFile:
+        self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromMED(self.values.MeshName)[0][0]
+        self.values.CpyMesh.SetName(self.values.CpyName)
+      else:
+        if self.values.SelectedObject is None:
+          self.values.SelectedObject = self.values.study.FindObjectByName(self.values.MeshName, 'SMESH')[-1]
+        self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
 
-    if self.isFile:
-      self.values.CpyMesh = self.values.smesh_builder.CreateMeshesFromMED(self.values.MeshName)[0][0]
-      self.values.CpyMesh.SetName(self.values.CpyName)
-    else:
-      if self.values.SelectedObject is None:
-        self.values.SelectedObject = self.values.study.FindObjectByName(self.values.MeshName, 'SMESH')[-1]
-      self.values.CpyMesh = self.values.smesh_builder.CopyMesh(self.values.SelectedObject.GetObject(), self.values.CpyName, True, True)
-
-    self.numRepair+=1
-    self.values.AnalysisAndRepair(self.CB_GenRepair.isChecked() or self.CB_RepairOnly.isChecked())
+      self.numRepair+=1
+      self.values.AnalysisAndRepair(self.CB_GenRepair.isChecked() or self.CB_RepairOnly.isChecked())
+    except:
+      self.values = None
+      return False
 
   def PBOKPressed(self):
     if self.fichierIn=="" and self.MeshIn=="":

@@ -28,10 +28,11 @@ import pprint as PP #pretty print
 
 from mmgplugin import usePySide
 if usePySide():
-    from PySide2.QtWidgets import QDialog, QMessageBox
+    from PySide2.QtWidgets import QDialog, QMessageBox, QFileDialog
+    from PySide2.QtCore import QSize, QProcess
 else:
-    from PyQt5.Qt import QDialog, QMessageBox
-
+    from PyQt5.Qt import QDialog, QMessageBox, QFileDialog
+    from PyQt5.QtCore import QSize, QProcess
 # Import des panels
 
 from mmgplugin.ViewText_ui import Ui_ViewExe
